@@ -23,7 +23,7 @@ public class DbUtils {
     private void createDbConnection(String username, String password){
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/as2024", username, password);
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ash2024", username, password);
             System.out.println("Connection successful!");
             System.out.println();
         }catch (Exception e){

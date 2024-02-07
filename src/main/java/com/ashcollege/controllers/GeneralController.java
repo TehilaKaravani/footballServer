@@ -73,4 +73,9 @@ public class GeneralController {
         return true;
     }
 
+//    @RequestMapping (value = "get-products")
+//    public BasicResponse getProducts (String secret) {
+//        List<String> products = List.of("Milk", "Water pack");
+//
+//    }
 }
