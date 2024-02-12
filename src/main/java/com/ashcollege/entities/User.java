@@ -7,8 +7,8 @@ public class User {
     private int id;
     private String username;
     private String password;
-    private List<String> notes;
     private String secret;
+    private College college;
 
     public User(int id, String username, String password) {
         this(username, password);
@@ -18,7 +18,6 @@ public class User {
     public User(String username, String password) {
         this.username = username;
         this.password = password;
-        this.notes = new ArrayList<>();
     }
 
     public User() {
@@ -50,18 +49,6 @@ public class User {
         return this.username.equals(username) && this.password.equals(password);
     }
 
-    public List<String> getNotes() {
-        return notes;
-    }
-
-    public void setNotes(List<String> notes) {
-        this.notes = notes;
-    }
-
-    public void addNote (String note) {
-        this.notes.add(note);
-    }
-
     public int getId() {
         return id;
     }
@@ -76,5 +63,13 @@ public class User {
 
     public void setSecret(String secret) {
         this.secret = secret;
+    }
+
+    public College getCollege() {
+        return college;
+    }
+
+    public void setCollege(College college) {
+        this.college = college;
     }
 }

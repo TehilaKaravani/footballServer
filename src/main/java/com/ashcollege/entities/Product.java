@@ -12,6 +12,11 @@ public class Product {
         this.count = count;
     }
 
+    public Product(String description, float price) {
+        this.description = description;
+        this.price = price;
+    }
+
     public int getId() {
         return id;
     }

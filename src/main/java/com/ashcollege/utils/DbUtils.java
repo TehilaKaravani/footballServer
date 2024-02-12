@@ -125,5 +125,49 @@ public class DbUtils {
 
     }
 
+    public List<Product> getProductsByUserSecret (String secret) {
+        List<Product> products = new ArrayList<>();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "SELECT p.description,p.price " +
+                            "FROM users u INNER JOIN users_products_map upm ON u.id = upm.user_id " +
+                            "INNER JOIN products p ON upm.product_id = p.id " +
+                            "WHERE u.secret = ?"
+            );
+            preparedStatement.setString(1,secret);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                String name = resultSet.getString("description");
+                float price = resultSet.getFloat("price");
+                Product product = new Product(name,price);
+                products.add(product);
+            }
+        }catch (Exception e) {
+            System.out.println(e);
+        }
+        return products;
+    }
+
+    public User getUserBySecret (String secret) {
+        User user = null;
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "SELECT * " +
+                            "FROM users u " +
+                            "WHERE u.secret = ?"
+            );
+            preparedStatement.setString(1,secret);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                user = new User();
+                user.setId(id);
+            }
+        }catch (Exception e) {
+            System.out.println(e);
+        }
+        return user;
+    }
+
 
 }
