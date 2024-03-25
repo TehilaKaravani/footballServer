@@ -2,8 +2,12 @@ package com.ashcollege;
 
 
 import com.ashcollege.entities.Client;
-import com.ashcollege.entities.Note;
+import com.ashcollege.entities.Match;
+import com.ashcollege.entities.Team;
 import com.ashcollege.entities.User;
+import com.ashcollege.responses.BasicResponse;
+import com.ashcollege.responses.LoginResponse;
+import com.github.javafaker.Faker;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+
+import static com.ashcollege.utils.Errors.*;
 
 
 @Transactional
@@ -42,8 +48,16 @@ public class Persist {
         return this.getQuerySession().get(clazz, oid);
     }
 
-    public <T> List<T> loadList(Class<T> clazz) {
+    public <T> List<T> loadUserList(Class<T> clazz) {
         return this.sessionFactory.getCurrentSession().createQuery("FROM User").list();
+    }
+
+    public <T> List<T> loadTeamList(Class<T> clazz) {
+        return this.sessionFactory.getCurrentSession().createQuery("FROM Team").list();
+    }
+
+    public <T> List<T> loadMatchList(Class<T> clazz) {
+        return this.sessionFactory.getCurrentSession().createQuery("FROM Match").list();
     }
 
     public Client getClientByFirstName(String firstName) {
@@ -55,6 +69,7 @@ public class Persist {
     }
 
     public User login(String username, String password) {
+        // check if not null
         return (User) this.sessionFactory.getCurrentSession().createQuery(
                         "FROM User WHERE username = :username AND password = :password")
                 .setParameter("username", username)
@@ -63,17 +78,31 @@ public class Persist {
                 .uniqueResult();
     }
 
-    public List<Note> getNotes(String secret) {
-        return this.sessionFactory.getCurrentSession().createQuery(
-                        "FROM Note WHERE owner.secret = :secret")
-                .setParameter("secret", secret)
-                .list();
+    public BasicResponse signUp(String username, String password) {
+        BasicResponse basicResponse;
+        Object userList = this.sessionFactory.getCurrentSession().createQuery(
+                        "FROM User WHERE username = :username")
+                .setParameter("username", username)
+                .uniqueResult();
+
+        if (userList == null) {
+            Faker faker = new Faker();
+            User user = new User(username, password, faker.random().hex());
+            save(user);
+            basicResponse = new LoginResponse(true, null, user.getId(), user.getSecret());
+        } else {
+            basicResponse = new BasicResponse(false, ERROR_SIGN_UP_USERNAME_TAKEN);
+        }
+        return basicResponse;
     }
 
-    public List<Note> getNotesByCollegeName (String collegeName) {
-        return this.sessionFactory.getCurrentSession().createQuery(
-                        "FROM Note WHERE owner.college.name = :collegeName")
-                .setParameter("collegeName", collegeName)
-                .list();
+    public User getUserBySecret (String secret) {
+        return (User) this.sessionFactory.getCurrentSession().createQuery(
+                        "FROM User WHERE secret = :secret")
+                .setParameter("secret", secret)
+                .setMaxResults(1)
+                .uniqueResult();
     }
+
+
 }
