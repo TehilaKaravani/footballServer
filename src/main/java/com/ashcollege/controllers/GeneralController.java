@@ -164,4 +164,9 @@ public class GeneralController {
 //        return sseEmitter;
 //    }
 
+    @RequestMapping(value = "create-teams")
+    public String createTeams() {
+        persist.createTeams();
+        return "ok";
+    }
 }

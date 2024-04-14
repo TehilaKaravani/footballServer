@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 import static com.ashcollege.utils.Errors.*;
@@ -104,5 +105,17 @@ public class Persist {
                 .uniqueResult();
     }
 
-
+    public void createTeams () {
+        List<Team> teams = (List<Team>) this.sessionFactory.getCurrentSession().createQuery(
+                        "FROM Team")
+                .list();
+        System.out.println(teams.toString());
+        if (teams.isEmpty()) {
+            Faker faker = new Faker();
+            for (int i = 0; i < 8; i++) {
+                Team team = new Team(faker.country().capital());
+                save(team);
+            }
+        }
+    }
 }
