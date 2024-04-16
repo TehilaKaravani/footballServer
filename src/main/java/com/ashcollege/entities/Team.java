@@ -4,12 +4,14 @@ public class Team {
     private int id;
     private String name;
 
-    private int skillLevel;
+    private SkillLevel skillLevel;
 
     public Team() {
+        this.skillLevel = new SkillLevel();
     }
     public Team(String name) {
         this.name = name;
+        this.skillLevel = new SkillLevel();
     }
 
     public int getId() {
@@ -28,11 +30,20 @@ public class Team {
         this.name = name;
     }
 
-    public int getSkillLevel() {
+    public SkillLevel getSkillLevel() {
         return skillLevel;
     }
 
-    public void setSkillLevel(int skillLevel) {
+    public void setSkillLevel(SkillLevel skillLevel) {
         this.skillLevel = skillLevel;
+    }
+
+    @Override
+    public String toString() {
+        return "Team{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", skillLevel=" + skillLevel +
+                '}';
     }
 }

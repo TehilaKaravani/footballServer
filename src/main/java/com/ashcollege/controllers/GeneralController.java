@@ -6,11 +6,16 @@ import com.ashcollege.entities.*;
 import com.ashcollege.responses.BasicResponse;
 import com.ashcollege.responses.LoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static com.ashcollege.utils.Errors.*;
@@ -23,23 +28,30 @@ public class GeneralController {
     private Persist persist;
 
 
-//    private List<EventClients> clients;
-//
-//    @PostConstruct
-//    public void init() {
-//        new Thread(() -> {
-//            try {
-//                Thread.sleep(1000);
-//                for (EventClients eventClients : clients) {
-//                    eventClients.getEmitter().send(new Date());
-//                }
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        });
-//    }
+    private final List<SseEmitter> clients = new ArrayList<>();
+
+    @PostConstruct
+    public void init() {
+        persist.createTeams();
+        new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                for (SseEmitter emitter : clients) {
+                    try {
+                        emitter.send(new Date());
+                    } catch (Exception e) {
+//                        System.out.println("Client leave");
+//                        clients.remove(eventClients);
+                    }
+                }
+
+            }
+        }).start();
+    }
 
 
     @RequestMapping(value = "/", method = {RequestMethod.GET, RequestMethod.POST})
@@ -48,14 +60,14 @@ public class GeneralController {
     }
 
     @RequestMapping(value = "/sign-up", method = {RequestMethod.GET, RequestMethod.POST})
-    public BasicResponse signUp(String username, String password, String password2) {
+    public BasicResponse signUp(String username, String email, String password, String password2) {
         BasicResponse basicResponse = null;
         Integer errorCode = null;
         boolean success = false;
         if (username != null && username.length() > 0) {
             if (password != null && password.length() > 0) {
                 if (password.equals(password2)) {
-                    return persist.signUp(username, password);
+                    return persist.signUp(username, email, password);
                 } else {
                     errorCode = ERROR_SIGN_UP_PASSWORDS_DONT_MATCH;
                 }
@@ -70,16 +82,19 @@ public class GeneralController {
 
 
     @RequestMapping(value = "/login", method = {RequestMethod.GET, RequestMethod.POST})
-    public BasicResponse login(String username, String password) {
+    public BasicResponse login(String email, String password) {
         BasicResponse basicResponse = null;
         boolean success = false;
         Integer errorCode = null;
         User user = null;
-        if (username != null && username.length() > 0) {
+
+//        check email
+
+        if (email != null && email.length() > 0) {
             if (password != null && password.length() > 0) {
-                user = persist.login(username, password);
+                user = persist.login(email, password);
                 if (user != null) {
-                    basicResponse = new LoginResponse(true, errorCode, user.getId(), user.getSecret());
+                    basicResponse = new LoginResponse(true, errorCode, user);
                 } else {
                     errorCode = ERROR_LOGIN_WRONG_CREDS;
                 }
@@ -119,7 +134,7 @@ public class GeneralController {
         List<Score> scoreList = new ArrayList<>();
 
         for (Team team : teamList) {
-           scoreList.add(team.getId() - 1,new Score(team));
+            scoreList.add(team.getId() - 1, new Score(team));
         }
 
         for (Match match : matchList) {
@@ -129,7 +144,7 @@ public class GeneralController {
                 scoreList.get(indexT1).addPoints(1);
                 scoreList.get(indexT2).addPoints(1);
 
-            }else {
+            } else {
                 int winnerIndex = match.winner().getId() - 1;
                 scoreList.get(winnerIndex).addPoints(3);
             }
@@ -145,7 +160,7 @@ public class GeneralController {
         User user = null;
         user = persist.getUserBySecret(secret);
         if (user != null) {
-            basicResponse = new LoginResponse(true, errorCode, user.getId(), user.getSecret());
+            basicResponse = new LoginResponse(true, errorCode, user);
         } else {
             errorCode = ERROR_LOGIN_WRONG_CREDS;
             basicResponse = new BasicResponse(success, errorCode);
@@ -153,20 +168,26 @@ public class GeneralController {
         return basicResponse;
     }
 
-//    @RequestMapping(value = "start-streaming", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-//    public SseEmitter CreateStreamingSession(String secret) {
-//        SseEmitter sseEmitter = new SseEmitter((long) (10 * 60 * 1000));
-//        try {
-//            clients.add(new EventClients(secret, sseEmitter));
-//        } catch (Exception e) {
-//            System.out.println(e);
-//        }
-//        return sseEmitter;
+    @RequestMapping(value = "start-streaming", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter CreateStreamingSession() {
+        try {
+            SseEmitter sseEmitter = new SseEmitter((long) (10 * 60 * 1000));
+            clients.add(sseEmitter);
+            return sseEmitter;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+//    @RequestMapping(value = "create-teams")
+//    public String createTeams() {
+//        persist.createTeams();
+//        return "ok";
 //    }
 
-    @RequestMapping(value = "create-teams")
-    public String createTeams() {
-        persist.createTeams();
+    @RequestMapping(value = "change-profile")
+    public String changeProfile(String category, String toChange, String secret) {
+        persist.changeProfile(category,toChange,secret);
         return "ok";
     }
 }

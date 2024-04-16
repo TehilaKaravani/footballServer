@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.ashcollege.utils.Errors.*;
@@ -31,6 +32,7 @@ public class Persist {
 
     private final SessionFactory sessionFactory;
 
+    private List<Team> teamList;
 
     @Autowired
     public Persist(SessionFactory sf) {
@@ -69,35 +71,42 @@ public class Persist {
                 .uniqueResult();
     }
 
-    public User login(String username, String password) {
+    public User login(String email, String password) {
+        if (email != null && password != null) {
+            return (User) this.sessionFactory.getCurrentSession().createQuery(
+                            "FROM User WHERE email = :email AND password = :password")
+                    .setParameter("email", email)
+                    .setParameter("password", password)
+                    .setMaxResults(1)
+                    .uniqueResult();
+        }
         // check if not null
-        return (User) this.sessionFactory.getCurrentSession().createQuery(
-                        "FROM User WHERE username = :username AND password = :password")
-                .setParameter("username", username)
-                .setParameter("password", password)
-                .setMaxResults(1)
-                .uniqueResult();
+        return null;
     }
 
-    public BasicResponse signUp(String username, String password) {
-        BasicResponse basicResponse;
-        Object userList = this.sessionFactory.getCurrentSession().createQuery(
+
+    public boolean isUsernameExist (String username) {
+        User userList = (User) this.sessionFactory.getCurrentSession().createQuery(
                         "FROM User WHERE username = :username")
                 .setParameter("username", username)
                 .uniqueResult();
 
-        if (userList == null) {
+        return (userList != null);
+    }
+    public BasicResponse signUp(String username,String email, String password) {
+        BasicResponse basicResponse;
+        if (!isUsernameExist(username) && isEmailCorrect(email)) {
             Faker faker = new Faker();
-            User user = new User(username, password, faker.random().hex());
+            User user = new User(username,email, password, faker.random().hex());
             save(user);
-            basicResponse = new LoginResponse(true, null, user.getId(), user.getSecret());
+            basicResponse = new LoginResponse(true, null, user);
         } else {
             basicResponse = new BasicResponse(false, ERROR_SIGN_UP_USERNAME_TAKEN);
         }
         return basicResponse;
     }
 
-    public User getUserBySecret (String secret) {
+    public User getUserBySecret(String secret) {
         return (User) this.sessionFactory.getCurrentSession().createQuery(
                         "FROM User WHERE secret = :secret")
                 .setParameter("secret", secret)
@@ -105,17 +114,60 @@ public class Persist {
                 .uniqueResult();
     }
 
-    public void createTeams () {
+    public void createTeams() {
+        Faker faker = new Faker();
+        teamList = new ArrayList<>();
         List<Team> teams = (List<Team>) this.sessionFactory.getCurrentSession().createQuery(
                         "FROM Team")
                 .list();
-        System.out.println(teams.toString());
         if (teams.isEmpty()) {
-            Faker faker = new Faker();
             for (int i = 0; i < 8; i++) {
                 Team team = new Team(faker.country().capital());
+//                team.setSkillLevel(faker.random().nextInt(0,100));
                 save(team);
+                teamList.add(team);
             }
+        } else {
+            teamList = teams;
+        }
+
+        for (Team team : teamList) {
+//            team.setSkillLevel(faker.random().nextInt(0, 100));
+        }
+        System.out.println(teamList.toString());
+    }
+
+    public boolean isEmailCorrect (String email) {
+        return email.contains("@") && email.contains(".") && (email.indexOf(".") - email.indexOf("@") > 1) && (email.indexOf("@") != 0);
+    }
+
+    public boolean isPasswordCorrect (String password) {
+        return password.length() >= 8;
+    }
+
+    public void changeProfile (String category, String toChange, String secret) {
+        switch (category){
+            case "username":
+                if (!isUsernameExist(toChange)) {
+                    User user = getUserBySecret(secret);
+                    user.setUsername(toChange);
+                    save(user);
+                }
+                break;
+            case "email":
+                if (isEmailCorrect(toChange)) {
+                    User user = getUserBySecret(secret);
+                    user.setEmail(toChange);
+                    save(user);
+                }
+                break;
+            case "password":
+                if (isPasswordCorrect(toChange)) {
+                    User user = getUserBySecret(secret);
+                    user.setPassword(toChange);
+                    save(user);
+                }
+                break;
         }
     }
 }

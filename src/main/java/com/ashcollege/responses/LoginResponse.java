@@ -1,32 +1,24 @@
 package com.ashcollege.responses;
 
-public class LoginResponse extends BasicResponse {
-    private int id;
-    private String secret;
+import com.ashcollege.entities.User;
 
-    public LoginResponse(boolean success, Integer errorCode, int id, String secret) {
+public class LoginResponse extends BasicResponse {
+    private User user;
+
+    public LoginResponse(boolean success, Integer errorCode, User user) {
         super(success, errorCode);
-        this.id = id;
-        this.secret = secret;
+        this.user = user;
     }
 
     public LoginResponse(boolean success, Integer errorCode) {
         super(success, errorCode);
     }
 
-    public int getId() {
-        return id;
+    public User getUser() {
+        return user;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getSecret() {
-        return secret;
-    }
-
-    public void setSecret(String secret) {
-        this.secret = secret;
+    public void setUser(User user) {
+        this.user = user;
     }
 }
