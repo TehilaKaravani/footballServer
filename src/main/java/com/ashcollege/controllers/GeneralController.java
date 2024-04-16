@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import static com.ashcollege.utils.Errors.*;
 
@@ -33,6 +34,7 @@ public class GeneralController {
     @PostConstruct
     public void init() {
         persist.createTeams();
+        Cycle cycle = new Cycle();
         new Thread(() -> {
             while (true) {
                 try {
@@ -42,7 +44,7 @@ public class GeneralController {
                 }
                 for (SseEmitter emitter : clients) {
                     try {
-                        Cycle cycle = new Cycle();
+//                        Cycle cycle = new Cycle();
                         emitter.send(cycle.getGames());
                     } catch (Exception e) {
 //                        System.out.println("Client leave");
