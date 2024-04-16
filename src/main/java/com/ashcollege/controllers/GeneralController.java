@@ -42,7 +42,8 @@ public class GeneralController {
                 }
                 for (SseEmitter emitter : clients) {
                     try {
-                        emitter.send(new Date());
+                        Cycle cycle = new Cycle();
+                        emitter.send(cycle.getGames());
                     } catch (Exception e) {
 //                        System.out.println("Client leave");
 //                        clients.remove(eventClients);
@@ -189,4 +190,5 @@ public class GeneralController {
     public User changeProfile(String category, String toChange, String secret) {
         return persist.changeProfile(category,toChange,secret);
     }
+
 }

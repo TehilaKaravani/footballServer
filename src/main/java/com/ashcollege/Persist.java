@@ -63,6 +63,7 @@ public class Persist {
         return this.sessionFactory.getCurrentSession().createQuery("FROM Match").list();
     }
 
+
     public Client getClientByFirstName(String firstName) {
         return (Client) this.sessionFactory.getCurrentSession().createQuery(
                         "FROM Client WHERE firstName = :firstName")

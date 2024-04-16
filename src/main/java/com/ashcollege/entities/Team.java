@@ -14,6 +14,11 @@ public class Team {
         this.skillLevel = new SkillLevel();
     }
 
+    public Team(int id) {
+        this.id = id;
+        this.skillLevel = new SkillLevel();
+    }
+
     public int getId() {
         return id;
     }
