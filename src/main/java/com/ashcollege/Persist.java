@@ -138,36 +138,35 @@ public class Persist {
     }
 
     public boolean isEmailCorrect (String email) {
-        return email.contains("@") && email.contains(".") && (email.indexOf(".") - email.indexOf("@") > 1) && (email.indexOf("@") != 0);
+        return email.contains("@") && email.contains(".") && (email.lastIndexOf(".") - email.indexOf("@") > 1) && (email.indexOf("@") != 0);
     }
 
     public boolean isPasswordCorrect (String password) {
         return password.length() >= 8;
     }
 
-    public void changeProfile (String category, String toChange, String secret) {
+    public User changeProfile (String category, String toChange, String secret) {
+        User user = getUserBySecret(secret);
         switch (category){
             case "username":
                 if (!isUsernameExist(toChange)) {
-                    User user = getUserBySecret(secret);
                     user.setUsername(toChange);
                     save(user);
                 }
                 break;
             case "email":
                 if (isEmailCorrect(toChange)) {
-                    User user = getUserBySecret(secret);
                     user.setEmail(toChange);
                     save(user);
                 }
                 break;
             case "password":
                 if (isPasswordCorrect(toChange)) {
-                    User user = getUserBySecret(secret);
                     user.setPassword(toChange);
                     save(user);
                 }
                 break;
         }
+        return user;
     }
 }
