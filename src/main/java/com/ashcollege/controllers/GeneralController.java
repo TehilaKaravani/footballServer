@@ -186,8 +186,7 @@ public class GeneralController {
 //    }
 
     @RequestMapping(value = "change-profile")
-    public String changeProfile(String category, String toChange, String secret) {
-        persist.changeProfile(category,toChange,secret);
-        return "ok";
+    public User changeProfile(String category, String toChange, String secret) {
+        return persist.changeProfile(category,toChange,secret);
     }
 }
