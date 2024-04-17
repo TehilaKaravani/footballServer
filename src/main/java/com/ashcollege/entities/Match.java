@@ -6,6 +6,7 @@ public class Match {
     private Team team2;
     private int goals_T1;
     private int goals_T2;
+    private boolean isLive;
 
     public Match() {
 
@@ -17,6 +18,23 @@ public class Match {
         this.team2 = team2;
         this.goals_T1 = goals_T1;
         this.goals_T2 = goals_T2;
+        this.isLive = true;
+    }
+    public Match(Team team1, Team team2) {
+        this.team1 = team1;
+        this.team2 = team2;
+        this.goals_T1 = 0;
+        this.goals_T2 = 0;
+        this.isLive = true;
+    }
+
+    public Match(int id, Team team1, Team team2, int goals_T1, int goals_T2, boolean isLive) {
+        this.id = id;
+        this.team1 = team1;
+        this.team2 = team2;
+        this.goals_T1 = goals_T1;
+        this.goals_T2 = goals_T2;
+        this.isLive = isLive;
     }
 
     public int getId() {
@@ -57,6 +75,15 @@ public class Match {
 
     public void setGoals_T2(int goals_T2) {
         this.goals_T2 = goals_T2;
+    }
+
+
+    public boolean getIsLive() {
+        return isLive;
+    }
+
+    public void setIsLive(boolean live) {
+        isLive = live;
     }
 
     public Team winner () {

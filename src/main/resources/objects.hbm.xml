@@ -26,13 +26,13 @@
         <id name="id" type="int" column="id">
             <generator class="native"/>
         </id>
-
         <many-to-one name="team1" column="team1"
                      class="com.ashcollege.entities.Team"/>
         <many-to-one name="team2" column="team2"
                      class="com.ashcollege.entities.Team"/>
         <property name="goals_T1" type="int" column="goals_T1"/>
         <property name="goals_T2" type="int" column="goals_T2"/>
+        <property name="isLive" type="boolean" column="is_Live"/>
 
 
     </class>

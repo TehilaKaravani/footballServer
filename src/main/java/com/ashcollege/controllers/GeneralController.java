@@ -116,24 +116,24 @@ public class GeneralController {
 
     @RequestMapping(value = "get-users")
     public List<User> getUsers() {
-        return persist.loadUserList(User.class);
+        return persist.loadUserList();
     }
 
     @RequestMapping(value = "get-teams")
     public List<Team> getTeams() {
-        return persist.loadTeamList(Team.class);
+        return persist.loadTeamList();
     }
 
     @RequestMapping(value = "get-matches")
     public List<Match> getMatches() {
-        List<Match> matchList = persist.loadMatchList(Match.class);
+        List<Match> matchList = persist.loadMatchList();
         return matchList;
     }
 
     @RequestMapping(value = "get-score")
     public List<Score> getScore() {
-        List<Match> matchList = persist.loadMatchList(Match.class);
-        List<Team> teamList = persist.loadTeamList(Team.class);
+        List<Match> matchList = persist.loadMatchList();
+        List<Team> teamList = persist.loadTeamList();
         List<Score> scoreList = new ArrayList<>();
 
         for (Team team : teamList) {
@@ -191,6 +191,11 @@ public class GeneralController {
     @RequestMapping(value = "change-profile")
     public User changeProfile(String category, String toChange, String secret) {
         return persist.changeProfile(category,toChange,secret);
+    }
+
+    @RequestMapping(value = "add-match")
+    public void addMatch() {
+       persist.addMatch(1,4);
     }
 
 }

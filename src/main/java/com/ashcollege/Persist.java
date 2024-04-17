@@ -51,25 +51,22 @@ public class Persist {
         return this.getQuerySession().get(clazz, oid);
     }
 
-    public <T> List<T> loadUserList(Class<T> clazz) {
+    public <T> List<T> loadUserList() {
         return this.sessionFactory.getCurrentSession().createQuery("FROM User").list();
     }
 
-    public <T> List<T> loadTeamList(Class<T> clazz) {
+    public <T> List<T> loadTeamList() {
         return this.sessionFactory.getCurrentSession().createQuery("FROM Team").list();
     }
 
-    public <T> List<T> loadMatchList(Class<T> clazz) {
+    public <T> List<T> loadMatchList() {
         return this.sessionFactory.getCurrentSession().createQuery("FROM Match").list();
     }
 
-
-    public Client getClientByFirstName(String firstName) {
-        return (Client) this.sessionFactory.getCurrentSession().createQuery(
-                        "FROM Client WHERE firstName = :firstName")
-                .setParameter("firstName", firstName)
-                .setMaxResults(1)
-                .uniqueResult();
+    public void addMatch (int teamId1,int teamId2) {
+        List <Team> teamList = loadTeamList();
+        Match match = new Match(teamList.get(teamId1 - 1),teamList.get(teamId2 - 1));
+        save(match);
     }
 
     public User login(String email, String password) {
