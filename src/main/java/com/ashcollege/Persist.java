@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.Collections;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -67,6 +68,25 @@ public class Persist {
         List <Team> teamList = loadTeamList();
         Match match = new Match(teamList.get(teamId1 - 1),teamList.get(teamId2 - 1));
         save(match);
+    }
+
+    public ArrayList<ArrayList<Match>> getLeague () {
+        List <Team> teams = loadTeamList();
+        ArrayList<ArrayList<Match>> fixtures = new ArrayList<>();
+        int rounds = teams.size() - 1;
+        int matchesPerRound = teams.size() / 2;
+        for (int i = 0; i < rounds; i++) {
+            ArrayList<Match> round = new ArrayList<>();
+            for (int j = 0; j < matchesPerRound; j++) {
+                Match match = new Match(teams.get(j), teams.get(teams.size() - 1 - j));
+                round.add(match);
+            }
+            fixtures.add(round);
+
+            // Rotate teams
+            Collections.rotate(teams.subList(1, teams.size()), 1);
+        }
+        return fixtures;
     }
 
     public User login(String email, String password) {
