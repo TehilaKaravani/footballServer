@@ -5,6 +5,7 @@ import com.ashcollege.Score;
 import com.ashcollege.entities.*;
 import com.ashcollege.responses.BasicResponse;
 import com.ashcollege.responses.LoginResponse;
+import com.github.javafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -56,16 +57,43 @@ public class GeneralController {
 //            }).start();
 //        }
 
+
+        new Thread(() -> {
+            for (int i = 0; i < league.size() + 1; i++) {
+                System.out.println("-------------------switch----------------");
+                List<Match> liveMatches = persist.loadLiveMatchList();
+                for (int j = 0; j < liveMatches.size(); j++) {
+                    liveMatches.get(j).setIsLive(false);
+                    persist.save(liveMatches.get(j));
+                }
+                if (i < league.size()) {
+                    for (int j = 0; j < league.get(i).size(); j++) {
+                        persist.save(league.get(i).get(j));
+                    }
+                }
+                try {
+                    Thread.sleep(30000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }).start();
+
+
+//        for (int i = 0; i < league.get(0).size(); i++) {
+//            persist.save(league.get(0).get(i));
+//        }
         new Thread(() -> {
             while (true) {
                 try {
-                    Thread.sleep(10000);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
                 for (SseEmitter emitter : clients) {
                     try {
-                        emitter.send(league.get(0));
+                        emitter.send(persist.loadLiveMatchList());
+                        persist.addGoals();
                     } catch (Exception e) {
 //                        System.out.println("Client leave");
 //                        clients.remove(eventClients);
@@ -74,6 +102,7 @@ public class GeneralController {
             }
         }).start();
     }
+
 
     @RequestMapping(value = "/", method = {RequestMethod.GET, RequestMethod.POST})
     public Object hello() {
@@ -207,12 +236,12 @@ public class GeneralController {
 
     @RequestMapping(value = "change-profile")
     public User changeProfile(String category, String toChange, String secret) {
-        return persist.changeProfile(category,toChange,secret);
+        return persist.changeProfile(category, toChange, secret);
     }
 
     @RequestMapping(value = "add-match")
     public void addMatch() {
-       persist.addMatch(1,4);
+        persist.addMatch(1, 4);
     }
 
     @RequestMapping(value = "get-league")

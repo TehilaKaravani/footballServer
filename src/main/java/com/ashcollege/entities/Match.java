@@ -95,4 +95,23 @@ public class Match {
         }
         return winner;
     }
+
+    @Override
+    public String toString() {
+        return "Match{" +
+                "id=" + id +
+                ", team1=" + team1 +
+                ", team2=" + team2 +
+                ", goals_T1=" + goals_T1 +
+                ", goals_T2=" + goals_T2 +
+                ", isLive=" + isLive +
+                '}';
+    }
+
+    public void addGoal_T1() {
+        this.goals_T1++;
+    }
+    public void addGoal_T2() {
+        this.goals_T2++;
+    }
 }
