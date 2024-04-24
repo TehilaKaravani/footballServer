@@ -7,14 +7,17 @@ import com.ashcollege.responses.BasicResponse;
 import com.ashcollege.responses.LoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static com.ashcollege.utils.Errors.*;
 
@@ -30,11 +33,33 @@ public class GeneralController {
 
     @PostConstruct
     public void init() {
+        persist.createTeams();
         final ArrayList<ArrayList<Match>> league = persist.getLeague();
+
+//        for (ArrayList<Match> matches : league) {
+//            new Thread(() -> {
+//                while (true) {
+//                    try {
+//                        Thread.sleep(10000);
+//                    } catch (InterruptedException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                    for (SseEmitter emitter : clients) {
+//                        try {
+//                            emitter.send(matches);
+//                        } catch (Exception e) {
+////                        System.out.println("Client leave");
+////                        clients.remove(eventClients);
+//                        }
+//                    }
+//                }
+//            }).start();
+//        }
+
         new Thread(() -> {
             while (true) {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(10000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -49,7 +74,6 @@ public class GeneralController {
             }
         }).start();
     }
-
 
     @RequestMapping(value = "/", method = {RequestMethod.GET, RequestMethod.POST})
     public Object hello() {
