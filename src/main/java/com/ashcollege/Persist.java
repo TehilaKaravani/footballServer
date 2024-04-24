@@ -93,14 +93,19 @@ public class Persist {
     }
     public BasicResponse signUp(String username,String email, String password) {
         BasicResponse basicResponse;
-        if (!isUsernameExist(username) && isEmailCorrect(email)) {
-            Faker faker = new Faker();
-            User user = new User(username,email, password, faker.random().hex());
-            save(user);
-            basicResponse = new LoginResponse(true, null, user);
-        } else {
-            basicResponse = new BasicResponse(false, ERROR_SIGN_UP_USERNAME_TAKEN);
+        if (isEmailCorrect(email)) {
+            if (!isUsernameExist(username)) {
+                Faker faker = new Faker();
+                User user = new User(username,email, password, faker.random().hex());
+                save(user);
+                basicResponse = new LoginResponse(true, null, user);
+            } else {
+                basicResponse = new BasicResponse(false, ERROR_SIGN_UP_USERNAME_TAKEN);
+            }
+        }else {
+            basicResponse = new BasicResponse(false, ERROR_SIGN_UP_EMAIL_FORMAT);
         }
+
         return basicResponse;
     }
 

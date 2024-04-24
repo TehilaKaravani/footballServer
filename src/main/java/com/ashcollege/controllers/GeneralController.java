@@ -44,8 +44,7 @@ public class GeneralController {
                 }
                 for (SseEmitter emitter : clients) {
                     try {
-//                        Cycle cycle = new Cycle();
-                        emitter.send(cycle.getGames());
+                        emitter.send(persist.loadMatchList());
                     } catch (Exception e) {
 //                        System.out.println("Client leave");
 //                        clients.remove(eventClients);
