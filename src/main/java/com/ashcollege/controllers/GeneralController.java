@@ -34,7 +34,7 @@ public class GeneralController {
     @PostConstruct
     public void init() {
         persist.createTeams();
-        Cycle cycle = new Cycle();
+
         new Thread(() -> {
             while (true) {
                 try {
@@ -44,7 +44,7 @@ public class GeneralController {
                 }
                 for (SseEmitter emitter : clients) {
                     try {
-                        emitter.send(persist.loadMatchList());
+                        emitter.send(new Date());
                     } catch (Exception e) {
 //                        System.out.println("Client leave");
 //                        clients.remove(eventClients);
@@ -197,4 +197,8 @@ public class GeneralController {
        persist.addMatch(1,4);
     }
 
+    @RequestMapping(value = "get-league")
+    public ArrayList<ArrayList<Match>> getLeague() {
+        return persist.getLeague();
+    }
 }
