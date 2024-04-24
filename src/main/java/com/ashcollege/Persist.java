@@ -72,7 +72,7 @@ public class Persist {
 
     public ArrayList<ArrayList<Match>> getLeague () {
         List <Team> teams = loadTeamList();
-        ArrayList<ArrayList<Match>> fixtures = new ArrayList<>();
+        ArrayList<ArrayList<Match>> league = new ArrayList<>();
         int rounds = teams.size() - 1;
         int matchesPerRound = teams.size() / 2;
         for (int i = 0; i < rounds; i++) {
@@ -81,12 +81,12 @@ public class Persist {
                 Match match = new Match(teams.get(j), teams.get(teams.size() - 1 - j));
                 round.add(match);
             }
-            fixtures.add(round);
+            league.add(round);
 
             // Rotate teams
             Collections.rotate(teams.subList(1, teams.size()), 1);
         }
-        return fixtures;
+        return league;
     }
 
     public User login(String email, String password) {

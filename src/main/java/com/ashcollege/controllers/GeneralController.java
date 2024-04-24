@@ -13,11 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 import static com.ashcollege.utils.Errors.*;
 
@@ -33,8 +30,7 @@ public class GeneralController {
 
     @PostConstruct
     public void init() {
-        persist.createTeams();
-
+        final ArrayList<ArrayList<Match>> league = persist.getLeague();
         new Thread(() -> {
             while (true) {
                 try {
@@ -44,13 +40,12 @@ public class GeneralController {
                 }
                 for (SseEmitter emitter : clients) {
                     try {
-                        emitter.send(new Date());
+                        emitter.send(league.get(0));
                     } catch (Exception e) {
 //                        System.out.println("Client leave");
 //                        clients.remove(eventClients);
                     }
                 }
-
             }
         }).start();
     }
@@ -65,7 +60,6 @@ public class GeneralController {
     public BasicResponse signUp(String username, String email, String password, String password2) {
         BasicResponse basicResponse = null;
         Integer errorCode = null;
-        boolean success = false;
         if (username != null && username.length() > 0) {
             if (password != null && password.length() > 0) {
                 if (password.equals(password2)) {
