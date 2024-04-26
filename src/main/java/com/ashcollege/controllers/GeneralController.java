@@ -4,21 +4,17 @@ import com.ashcollege.Persist;
 import com.ashcollege.Score;
 import com.ashcollege.entities.*;
 import com.ashcollege.responses.BasicResponse;
-import com.ashcollege.responses.LoginResponse;
-import com.github.javafaker.Faker;
+import com.ashcollege.responses.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import static com.ashcollege.utils.Errors.*;
 
@@ -116,6 +112,7 @@ public class GeneralController {
         if (username != null && username.length() > 0) {
             if (password != null && password.length() > 0) {
                 if (password.equals(password2)) {
+                    //check strong password--------------------------------
                     return persist.signUp(username, email, password);
                 } else {
                     errorCode = ERROR_SIGN_UP_PASSWORDS_DONT_MATCH;
@@ -143,7 +140,7 @@ public class GeneralController {
             if (password != null && password.length() > 0) {
                 user = persist.login(email, password);
                 if (user != null) {
-                    basicResponse = new LoginResponse(true, errorCode, user);
+                    basicResponse = new UserResponse(true, errorCode, user);
                 } else {
                     errorCode = ERROR_LOGIN_WRONG_CREDS;
                 }
@@ -209,7 +206,7 @@ public class GeneralController {
         User user = null;
         user = persist.getUserBySecret(secret);
         if (user != null) {
-            basicResponse = new LoginResponse(true, errorCode, user);
+            basicResponse = new UserResponse(true, errorCode, user);
         } else {
             errorCode = ERROR_LOGIN_WRONG_CREDS;
             basicResponse = new BasicResponse(success, errorCode);
@@ -235,9 +232,10 @@ public class GeneralController {
 //    }
 
     @RequestMapping(value = "change-profile")
-    public User changeProfile(String category, String toChange, String secret) {
+    public UserResponse changeProfile(String category, String toChange, String secret) {
         return persist.changeProfile(category, toChange, secret);
     }
+
 
     @RequestMapping(value = "add-match")
     public void addMatch() {

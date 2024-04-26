@@ -1,12 +1,11 @@
 package com.ashcollege;
 
 
-import com.ashcollege.entities.Client;
 import com.ashcollege.entities.Match;
 import com.ashcollege.entities.Team;
 import com.ashcollege.entities.User;
 import com.ashcollege.responses.BasicResponse;
-import com.ashcollege.responses.LoginResponse;
+import com.ashcollege.responses.UserResponse;
 import com.github.javafaker.Faker;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -17,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Collections;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -125,12 +123,12 @@ public class Persist {
                 Faker faker = new Faker();
                 User user = new User(username,email, password, faker.random().hex());
                 save(user);
-                basicResponse = new LoginResponse(true, null, user);
+                basicResponse = new UserResponse(true, null, user);
             } else {
                 basicResponse = new BasicResponse(false, ERROR_SIGN_UP_USERNAME_TAKEN);
             }
         }else {
-            basicResponse = new BasicResponse(false, ERROR_SIGN_UP_EMAIL_FORMAT);
+            basicResponse = new BasicResponse(false, ERROR_EMAIL_FORMAT);
         }
 
         return basicResponse;
@@ -175,29 +173,42 @@ public class Persist {
         return password.length() >= 8;
     }
 
-    public User changeProfile (String category, String toChange, String secret) {
+    public UserResponse changeProfile (String category, String toChange, String secret) {
         User user = getUserBySecret(secret);
+        Integer errorCode = null;
+        UserResponse userResponse;
         switch (category){
             case "username":
                 if (!isUsernameExist(toChange)) {
                     user.setUsername(toChange);
                     save(user);
+                }else {
+                    errorCode = ERROR_SIGN_UP_USERNAME_TAKEN;
                 }
                 break;
             case "email":
                 if (isEmailCorrect(toChange)) {
                     user.setEmail(toChange);
                     save(user);
+                }else {
+                    errorCode = ERROR_EMAIL_FORMAT;
                 }
                 break;
             case "password":
                 if (isPasswordCorrect(toChange)) {
                     user.setPassword(toChange);
                     save(user);
+                }else {
+                    errorCode = ERROR_WEAK_PASSWORD;
                 }
                 break;
         }
-        return user;
+        if (errorCode == null){
+            userResponse = new UserResponse(true,errorCode,user);
+        }else {
+            userResponse = new UserResponse(false,errorCode,user);
+        }
+        return userResponse;
     }
 
     public void addGoals (){

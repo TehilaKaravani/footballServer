@@ -2,15 +2,15 @@ package com.ashcollege.responses;
 
 import com.ashcollege.entities.User;
 
-public class LoginResponse extends BasicResponse {
+public class UserResponse extends BasicResponse {
     private User user;
 
-    public LoginResponse(boolean success, Integer errorCode, User user) {
+    public UserResponse(boolean success, Integer errorCode, User user) {
         super(success, errorCode);
         this.user = user;
     }
 
-    public LoginResponse(boolean success, Integer errorCode) {
+    public UserResponse(boolean success, Integer errorCode) {
         super(success, errorCode);
     }
 
