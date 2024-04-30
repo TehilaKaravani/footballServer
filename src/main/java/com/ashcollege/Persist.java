@@ -93,21 +93,40 @@ public class Persist {
         return league;
     }
 
-    public User login(String email, String password) {
-        if (email != null && password != null) {
-            return (User) this.sessionFactory.getCurrentSession().createQuery(
-                            "FROM User WHERE email = :email AND password = :password")
-                    .setParameter("email", email)
-                    .setParameter("password", password)
-                    .setMaxResults(1)
-                    .uniqueResult();
+    public BasicResponse login(String email, String password) {
+        BasicResponse basicResponse;
+        Integer errorCode = null;
+        User user = null;
+
+        if (email != null && email.length() > 0) {
+            if (password != null && password.length() > 0) {
+                user = (User) this.sessionFactory.getCurrentSession().createQuery(
+                                "FROM User WHERE email = :email AND password = :password")
+                        .setParameter("email", email)
+                        .setParameter("password", password)
+                        .setMaxResults(1)
+                        .uniqueResult();
+
+            } else {
+                errorCode = ERROR_SIGN_UP_NO_PASSWORD;
+            }
+        } else {
+            errorCode = ERROR_SIGN_UP_NO_EMAIL;
         }
-        // check if not null
-        return null;
+
+        if (user == null) {
+            if (errorCode == null) {
+                errorCode = ERROR_LOGIN_WRONG_CREDS;
+            }
+            basicResponse = new BasicResponse(false, errorCode);
+        }else {
+            basicResponse = new UserResponse(true, errorCode, user);
+        }
+        return basicResponse;
     }
 
 
-    public boolean isUsernameExist (String username) {
+    private boolean isUsernameExist (String username) {
         User userList = (User) this.sessionFactory.getCurrentSession().createQuery(
                         "FROM User WHERE username = :username")
                 .setParameter("username", username)
@@ -116,21 +135,35 @@ public class Persist {
         return (userList != null);
     }
     public BasicResponse signUp(String username,String email, String password) {
-        BasicResponse basicResponse;
-        if (isEmailCorrect(email)) {
-            if (!isUsernameExist(username)) {
-                Faker faker = new Faker();
-                User user = new User(username,email, password, faker.random().hex());
-                save(user);
-                basicResponse = new UserResponse(true, null, user);
+        BasicResponse basicResponse = null;
+        Integer errorCode = null;
+        if (username != null && !username.isEmpty()) {
+            if (password != null && !password.isEmpty()) {
+                if (email != null && !email.isEmpty()) {
+                    if (isEmailCorrect(email)) {
+                        if (!isUsernameExist(username)) {
+                            if (isPasswordStrong(password)) {
+                                Faker faker = new Faker();
+                                User user = new User(username,email, password, faker.random().hex());
+                                save(user);
+                                basicResponse = new UserResponse(true, null, user);
+                            }
+                        } else {
+                            errorCode = ERROR_SIGN_UP_USERNAME_TAKEN;
+                        }
+                    }else {
+                        errorCode = ERROR_EMAIL_FORMAT;
+                    }
+                } else {
+                    errorCode = ERROR_SIGN_UP_NO_EMAIL;
+                }
             } else {
-                basicResponse = new BasicResponse(false, ERROR_SIGN_UP_USERNAME_TAKEN);
+                errorCode = ERROR_SIGN_UP_NO_PASSWORD;
             }
-        }else {
-            basicResponse = new BasicResponse(false, ERROR_EMAIL_FORMAT);
+        } else {
+            errorCode = ERROR_SIGN_UP_NO_USERNAME;
         }
-
-        return basicResponse;
+        return new BasicResponse(false, errorCode);
     }
 
     public User getUserBySecret(String secret) {
@@ -157,23 +190,19 @@ public class Persist {
         } else {
             teamList = teams;
         }
-
-//        for (Team team : teamList) {
-//            team.setSkillLevel(faker.random().nextInt(0, 100));
-//        }
-//        System.out.println(teamList.toString());
     }
 
     public boolean isEmailCorrect (String email) {
         return email.contains("@") && email.contains(".") && (email.lastIndexOf(".") - email.indexOf("@") > 1) && (email.indexOf("@") != 0);
     }
 
-    public boolean isPasswordCorrect (String password) {
+    public boolean isPasswordStrong(String password) {
         return password.length() >= 8;
     }
 
-    public UserResponse changeProfile (String category, String toChange, String secret) {
+    public UserResponse changeUsernameOrEmail(String category, String toChange, String secret) {
         User user = getUserBySecret(secret);
+
         Integer errorCode = null;
         UserResponse userResponse;
         switch (category){
@@ -193,14 +222,6 @@ public class Persist {
                     errorCode = ERROR_EMAIL_FORMAT;
                 }
                 break;
-            case "password":
-                if (isPasswordCorrect(toChange)) {
-                    user.setPassword(toChange);
-                    save(user);
-                }else {
-                    errorCode = ERROR_WEAK_PASSWORD;
-                }
-                break;
         }
         if (errorCode == null){
             userResponse = new UserResponse(true,errorCode,user);
@@ -210,6 +231,30 @@ public class Persist {
         return userResponse;
     }
 
+    public UserResponse changePassword (String toChange,String currentPassword, String secret) {
+        User user = getUserBySecret(secret);
+        Integer errorCode = null;
+        UserResponse userResponse;
+
+
+        if (user.getPassword().equals(currentPassword)) {
+            if (isPasswordStrong(toChange)) {
+                user.setPassword(toChange);
+                save(user);
+            }else {
+                errorCode = ERROR_WEAK_PASSWORD;
+            }
+        }else {
+            errorCode = ERROR_SIGN_UP_PASSWORDS_DONT_MATCH;
+        }
+
+        if (errorCode == null){
+            userResponse = new UserResponse(true,errorCode,user);
+        }else {
+            userResponse = new UserResponse(false,errorCode,user);
+        }
+        return userResponse;
+    }
     public void addGoals (){
         List<Match> matchList = loadMatchList();
         List<Match> liveMatches = matchList.stream().filter((match) -> (match.getIsLive())).toList();

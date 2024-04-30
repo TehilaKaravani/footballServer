@@ -1,7 +1,6 @@
 package com.ashcollege.controllers;
 
 import com.ashcollege.Persist;
-import com.ashcollege.Score;
 import com.ashcollege.entities.*;
 import com.ashcollege.responses.BasicResponse;
 import com.ashcollege.responses.UserResponse;
@@ -90,21 +89,13 @@ public class GeneralController {
 
     @RequestMapping(value = "/sign-up", method = {RequestMethod.GET, RequestMethod.POST})
     public BasicResponse signUp(String username, String email, String password, String password2) {
-        BasicResponse basicResponse = null;
         Integer errorCode = null;
-        if (username != null && username.length() > 0) {
-            if (password != null && password.length() > 0) {
-                if (password.equals(password2)) {
-                    //check strong password--------------------------------
-                    return persist.signUp(username, email, password);
-                } else {
-                    errorCode = ERROR_SIGN_UP_PASSWORDS_DONT_MATCH;
-                }
-            } else {
-                errorCode = ERROR_SIGN_UP_NO_PASSWORD;
-            }
+        if (password.equals(password2)) {
+            //check strong password--------------------------------
+            return persist.signUp(username, email, password);
+
         } else {
-            errorCode = ERROR_SIGN_UP_NO_USERNAME;
+            errorCode = ERROR_SIGN_UP_PASSWORDS_DONT_MATCH;
         }
         return new BasicResponse(false, errorCode);
     }
@@ -112,31 +103,7 @@ public class GeneralController {
 
     @RequestMapping(value = "/login", method = {RequestMethod.GET, RequestMethod.POST})
     public BasicResponse login(String email, String password) {
-        BasicResponse basicResponse = null;
-        boolean success = false;
-        Integer errorCode = null;
-        User user = null;
-
-//        check email
-
-        if (email != null && email.length() > 0) {
-            if (password != null && password.length() > 0) {
-                user = persist.login(email, password);
-                if (user != null) {
-                    basicResponse = new UserResponse(true, errorCode, user);
-                } else {
-                    errorCode = ERROR_LOGIN_WRONG_CREDS;
-                }
-            } else {
-                errorCode = ERROR_SIGN_UP_NO_PASSWORD;
-            }
-        } else {
-            errorCode = ERROR_SIGN_UP_NO_USERNAME;
-        }
-        if (user == null) {
-            basicResponse = new BasicResponse(success, errorCode);
-        }
-        return basicResponse;
+        return persist.login(email, password);
     }
 
 
@@ -183,25 +150,13 @@ public class GeneralController {
         }
     }
 
-//    @RequestMapping(value = "create-teams")
-//    public String createTeams() {
-//        persist.createTeams();
-//        return "ok";
-//    }
-
-    @RequestMapping(value = "change-profile")
-    public UserResponse changeProfile(String category, String toChange, String secret) {
-        return persist.changeProfile(category, toChange, secret);
+    @RequestMapping(value = "change-username-or-email")
+    public UserResponse changeUsernameOrEmail(String category, String toChange, String secret) {
+        return persist.changeUsernameOrEmail(category, toChange, secret);
     }
 
-
-    @RequestMapping(value = "add-match")
-    public void addMatch() {
-        persist.addMatch(1, 4);
+    @RequestMapping(value = "change-password")
+    public UserResponse changePassword(String toChange, String currentPassword, String secret) {
+        return persist.changePassword(toChange, currentPassword, secret);
     }
-
-//    @RequestMapping(value = "get-league")
-//    public ArrayList<ArrayList<Match>> getLeague() {
-//        return persist.getLeagueGames();
-//    }
 }
