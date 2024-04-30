@@ -12,8 +12,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import java.util.Collections;
 
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ import static com.ashcollege.utils.Errors.*;
 @SuppressWarnings("unchecked")
 public class Persist {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Persist.class);
+//    private static final Logger LOGGER = LoggerFactory.getLogger(Persist.class);
 
     private final SessionFactory sessionFactory;
 
@@ -65,7 +64,7 @@ public class Persist {
     public List<Match> loadLiveMatchList() {
         List<Match> matches = this.sessionFactory.getCurrentSession().createQuery("FROM Match").list();
         return matches.stream().filter((match) -> {
-            return match.getIsLive() == true;
+            return match.getIsLive();
         }).toList();
     }
 
@@ -75,7 +74,7 @@ public class Persist {
         save(match);
     }
 
-    public ArrayList<ArrayList<Match>> getLeague () {
+    public ArrayList<ArrayList<Match>> getLeagueGames() {
         List <Team> teams = loadTeamList();
         ArrayList<ArrayList<Match>> league = new ArrayList<>();
         int rounds = teams.size() - 1;
@@ -159,10 +158,10 @@ public class Persist {
             teamList = teams;
         }
 
-        for (Team team : teamList) {
+//        for (Team team : teamList) {
 //            team.setSkillLevel(faker.random().nextInt(0, 100));
-        }
-        System.out.println(teamList.toString());
+//        }
+//        System.out.println(teamList.toString());
     }
 
     public boolean isEmailCorrect (String email) {
@@ -213,9 +212,7 @@ public class Persist {
 
     public void addGoals (){
         List<Match> matchList = loadMatchList();
-        List<Match> liveMatches = matchList.stream().filter((match) -> {
-            return match.getIsLive() == true;
-        }).toList();
+        List<Match> liveMatches = matchList.stream().filter((match) -> (match.getIsLive())).toList();
 
         for (int i = 0; i < liveMatches.size(); i++) {
             Match game = liveMatches.get(i);
@@ -236,6 +233,5 @@ public class Persist {
             }
             save(game);
         }
-
     }
 }

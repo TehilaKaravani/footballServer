@@ -31,27 +31,8 @@ public class GeneralController {
     @PostConstruct
     public void init() {
         persist.createTeams();
-        final ArrayList<ArrayList<Match>> league = persist.getLeague();
-
-//        for (ArrayList<Match> matches : league) {
-//            new Thread(() -> {
-//                while (true) {
-//                    try {
-//                        Thread.sleep(10000);
-//                    } catch (InterruptedException e) {
-//                        throw new RuntimeException(e);
-//                    }
-//                    for (SseEmitter emitter : clients) {
-//                        try {
-//                            emitter.send(matches);
-//                        } catch (Exception e) {
-////                        System.out.println("Client leave");
-////                        clients.remove(eventClients);
-//                        }
-//                    }
-//                }
-//            }).start();
-//        }
+        List<Team> teams = persist.loadTeamList();
+        final ArrayList<ArrayList<Match>> league = persist.getLeagueGames();
 
 
         new Thread(() -> {
@@ -79,6 +60,8 @@ public class GeneralController {
 //        for (int i = 0; i < league.get(0).size(); i++) {
 //            persist.save(league.get(0).get(i));
 //        }
+
+
         new Thread(() -> {
             while (true) {
                 try {
@@ -88,7 +71,7 @@ public class GeneralController {
                 }
                 for (SseEmitter emitter : clients) {
                     try {
-                        emitter.send(persist.loadLiveMatchList());
+                        emitter.send(persist.loadMatchList());
                         persist.addGoals();
                     } catch (Exception e) {
 //                        System.out.println("Client leave");
@@ -173,31 +156,6 @@ public class GeneralController {
         return matchList;
     }
 
-    @RequestMapping(value = "get-score")
-    public List<Score> getScore() {
-        List<Match> matchList = persist.loadMatchList();
-        List<Team> teamList = persist.loadTeamList();
-        List<Score> scoreList = new ArrayList<>();
-
-        for (Team team : teamList) {
-            scoreList.add(team.getId() - 1, new Score(team));
-        }
-
-        for (Match match : matchList) {
-            if (match.winner() == null) {
-                int indexT1 = match.getTeam1().getId() - 1;
-                int indexT2 = match.getTeam2().getId() - 1;
-                scoreList.get(indexT1).addPoints(1);
-                scoreList.get(indexT2).addPoints(1);
-
-            } else {
-                int winnerIndex = match.winner().getId() - 1;
-                scoreList.get(winnerIndex).addPoints(3);
-            }
-        }
-        return scoreList;
-    }
-
     @RequestMapping(value = "get-user-by-secret")
     public BasicResponse getUserBySecret(String secret) {
         BasicResponse basicResponse = null;
@@ -242,8 +200,8 @@ public class GeneralController {
         persist.addMatch(1, 4);
     }
 
-    @RequestMapping(value = "get-league")
-    public ArrayList<ArrayList<Match>> getLeague() {
-        return persist.getLeague();
-    }
+//    @RequestMapping(value = "get-league")
+//    public ArrayList<ArrayList<Match>> getLeague() {
+//        return persist.getLeagueGames();
+//    }
 }

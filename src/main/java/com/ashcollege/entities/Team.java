@@ -7,12 +7,15 @@ public class Team {
     private SkillLevel skillLevel;
 
     public Team() {
-        this.skillLevel = new SkillLevel();
     }
     public Team(String name) {
         this.name = name;
-        this.skillLevel = new SkillLevel();
     }
+
+//    public Team(String name,SkillLevel skillLevel) {
+//        this.name = name;
+//        this.skillLevel = skillLevel;
+//    }
 
     public Team(int id) {
         this.id = id;

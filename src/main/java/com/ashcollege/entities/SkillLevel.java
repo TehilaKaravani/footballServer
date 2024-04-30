@@ -16,13 +16,13 @@ public class SkillLevel {
     public SkillLevel(){
         this.protection = faker.random().nextInt(0, 100);
         this.attack = faker.random().nextInt(0, 100);
-        updateMoraleAndLuck();
+//        updateMoraleAndLuck();
     }
 
     public Integer getSkillLevel () {
         Integer skillLevel;
         skillLevel = (int) ((this.protection * 0.5) + (this.attack * 0.5));
-        skillLevel = (int) (skillLevel * 0.9 + this.morale *0.05 + this.luck * 0.05);
+//        skillLevel = (int) (skillLevel * 0.9 + this.morale *0.05 + this.luck * 0.05);
         return skillLevel;
     }
 
