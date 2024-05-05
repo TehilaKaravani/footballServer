@@ -6,7 +6,7 @@ public class Match {
     private Team team2;
     private int goals_T1;
     private int goals_T2;
-    private boolean isLive;
+    private Boolean isLive;
 
     public Match() {
 
@@ -18,14 +18,14 @@ public class Match {
         this.team2 = team2;
         this.goals_T1 = goals_T1;
         this.goals_T2 = goals_T2;
-        this.isLive = true;
+        this.isLive = null;
     }
     public Match(Team team1, Team team2) {
         this.team1 = team1;
         this.team2 = team2;
         this.goals_T1 = 0;
         this.goals_T2 = 0;
-        this.isLive = true;
+        this.isLive = null;
     }
 
     public Match(int id, Team team1, Team team2, int goals_T1, int goals_T2, boolean isLive) {
@@ -78,11 +78,11 @@ public class Match {
     }
 
 
-    public boolean getIsLive() {
+    public Boolean getIsLive() {
         return isLive;
     }
 
-    public void setIsLive(boolean live) {
+    public void setIsLive(Boolean live) {
         isLive = live;
     }
 

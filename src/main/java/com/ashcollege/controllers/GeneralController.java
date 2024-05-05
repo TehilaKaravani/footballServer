@@ -34,6 +34,34 @@ public class GeneralController {
         final ArrayList<ArrayList<Match>> league = persist.getLeagueGames();
 
 
+//        new Thread(() -> {
+//            for (int i = 0; i < league.size() + 1; i++) {
+//                System.out.println("-------------------switch----------------");
+//                List<Match> liveMatches = persist.loadLiveMatchList();
+//                for (int j = 0; j < liveMatches.size(); j++) {
+//                    liveMatches.get(j).setIsLive(false);
+//                    persist.save(liveMatches.get(j));
+//                }
+//                if (i < league.size()) {
+//                    for (int j = 0; j < league.get(i).size(); j++) {
+//                        persist.save(league.get(i).get(j));
+//                    }
+//                }
+//                try {
+//                    Thread.sleep(30000);
+//                } catch (InterruptedException e) {
+//                    throw new RuntimeException(e);
+//                }
+//            }
+//        }).start();
+
+        for (int i = 0; i < league.size(); i++){
+            for (int j = 0; j < league.get(i).size(); j++) {
+//                league.get(i).get(j).setIsLive(null);
+                persist.save(league.get(i).get(j));
+            }
+        }
+
         new Thread(() -> {
             for (int i = 0; i < league.size() + 1; i++) {
                 System.out.println("-------------------switch----------------");
@@ -44,6 +72,7 @@ public class GeneralController {
                 }
                 if (i < league.size()) {
                     for (int j = 0; j < league.get(i).size(); j++) {
+                        league.get(i).get(j).setIsLive(true);
                         persist.save(league.get(i).get(j));
                     }
                 }

@@ -1,15 +1,24 @@
 package com.ashcollege.entities;
 
+import com.github.javafaker.Faker;
+
 public class Team {
     private int id;
     private String name;
 
-    private SkillLevel skillLevel;
+//    private SkillLevel skillLevel;
+
+    private int skillLevel;
 
     public Team() {
+//        this.skillLevel = new SkillLevel();
+        calSkillLevel();
     }
+
     public Team(String name) {
         this.name = name;
+//        this.skillLevel = new SkillLevel();
+        calSkillLevel();
     }
 
 //    public Team(String name,SkillLevel skillLevel) {
@@ -19,7 +28,8 @@ public class Team {
 
     public Team(int id) {
         this.id = id;
-        this.skillLevel = new SkillLevel();
+//        this.skillLevel = new SkillLevel();
+        calSkillLevel();
     }
 
     public int getId() {
@@ -38,13 +48,28 @@ public class Team {
         this.name = name;
     }
 
-    public SkillLevel getSkillLevel() {
+    public void calSkillLevel (){
+        Faker faker = new Faker();
+        int protection = faker.random().nextInt(0, 100);
+        int attack = faker.random().nextInt(0, 100);
+        this.skillLevel = (int) ((protection * 0.5) + (attack * 0.5));
+    }
+
+    public int getSkillLevel() {
         return skillLevel;
     }
 
-    public void setSkillLevel(SkillLevel skillLevel) {
+    public void setSkillLevel(Integer skillLevel) {
         this.skillLevel = skillLevel;
     }
+
+    //    public SkillLevel getSkillLevel() {
+//        return skillLevel;
+//    }
+
+//    public void setSkillLevel(SkillLevel skillLevel) {
+//        this.skillLevel = skillLevel;
+//    }
 
     @Override
     public String toString() {

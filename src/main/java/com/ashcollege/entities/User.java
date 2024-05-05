@@ -9,26 +9,30 @@ public class User {
     private String email;
     private String password;
     private String secret;
+    private int balance;
 
     public User(String username,String email, String password, String secret) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.secret = secret;
+        this.balance = 1000;
     }
 
     public User(int id, String username, String password) {
         this(username, password);
         this.id = id;
+        this.balance = 1000;
     }
 
     public User(String username, String password) {
         this.username = username;
         this.password = password;
+        this.balance = 1000;
     }
 
     public User() {
-
+        this.balance = 1000;
     }
 
 
@@ -79,5 +83,13 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public int getBalance() {
+        return balance;
+    }
+
+    public void setBalance(int balance) {
+        this.balance = balance;
     }
 }

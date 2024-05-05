@@ -64,7 +64,7 @@ public class Persist {
     public List<Match> loadLiveMatchList() {
         List<Match> matches = this.sessionFactory.getCurrentSession().createQuery("FROM Match").list();
         return matches.stream().filter((match) -> {
-            return match.getIsLive();
+            return (match.getIsLive() != null) && (match.getIsLive());
         }).toList();
     }
 
@@ -257,16 +257,16 @@ public class Persist {
     }
     public void addGoals (){
         List<Match> matchList = loadMatchList();
-        List<Match> liveMatches = matchList.stream().filter((match) -> (match.getIsLive())).toList();
+        List<Match> liveMatches = loadLiveMatchList();
 
         for (int i = 0; i < liveMatches.size(); i++) {
             Match game = liveMatches.get(i);
             Faker faker = new Faker();
             int goalRandom = faker.random().nextInt(0,500);
-            if (goalRandom < 10) {
-                if (game.getTeam1().getSkillLevel().getSkillLevel() > game.getTeam2().getSkillLevel().getSkillLevel()) {
+            if (goalRandom < 20) {
+                if (game.getTeam1().getSkillLevel() > game.getTeam2().getSkillLevel()) {
                     game.addGoal_T1();
-                }else if (game.getTeam1().getSkillLevel().getSkillLevel() < game.getTeam2().getSkillLevel().getSkillLevel()) {
+                }else if (game.getTeam1().getSkillLevel() < game.getTeam2().getSkillLevel()) {
                     game.addGoal_T2();
                 }else {
                     if (faker.random().nextInt(0,1) == 0) {

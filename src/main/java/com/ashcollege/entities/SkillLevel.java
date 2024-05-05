@@ -1,6 +1,7 @@
 package com.ashcollege.entities;
 
 import com.github.javafaker.Faker;
+import org.hibernate.id.IntegralDataTypeHolder;
 
 public class SkillLevel {
     private Integer protection;
@@ -62,4 +63,5 @@ public class SkillLevel {
     public void setLuck(Integer luck) {
         this.luck = luck;
     }
+
 }
