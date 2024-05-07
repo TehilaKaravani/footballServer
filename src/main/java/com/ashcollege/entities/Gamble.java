@@ -60,11 +60,23 @@ public class Gamble {
         this.sum = sum;
     }
 
-    public boolean getIsCorrect() {
+    public Boolean getIsCorrect() {
         return isCorrect;
     }
 
-    public void setIsCorrect(boolean correct) {
+    public void setIsCorrect(Boolean correct) {
         isCorrect = correct;
+    }
+
+    @Override
+    public String toString() {
+        return "Gamble{" +
+                "id=" + id +
+                ", user=" + user +
+                ", match=" + match +
+                ", team=" + team +
+                ", sum=" + sum +
+                ", isCorrect=" + isCorrect +
+                '}';
     }
 }

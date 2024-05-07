@@ -48,12 +48,8 @@
                      class="com.ashcollege.entities.Match"/>
         <property name="team" type="int" column="team"/>
         <property name="sum" type="int" column="sum"/>
-        <property name="isCorrect" type="boolean" column="isCorrect"/>
+        <property name="isCorrect" type="boolean" column="is_Correct"/>
     </class>
-
-
-
-
 
     <!--    example2-->
     <!--    <many-to-one name="object" column="object_id"-->

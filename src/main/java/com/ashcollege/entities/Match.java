@@ -12,14 +12,14 @@ public class Match {
 
     }
 
-    public Match(int id, Team team1, Team team2, int goals_T1, int goals_T2) {
-        this.id = id;
-        this.team1 = team1;
-        this.team2 = team2;
-        this.goals_T1 = goals_T1;
-        this.goals_T2 = goals_T2;
-        this.isLive = null;
-    }
+//    public Match(int id, Team team1, Team team2, int goals_T1, int goals_T2) {
+//        this.id = id;
+//        this.team1 = team1;
+//        this.team2 = team2;
+//        this.goals_T1 = goals_T1;
+//        this.goals_T2 = goals_T2;
+//        this.isLive = null;
+//    }
     public Match(Team team1, Team team2) {
         this.team1 = team1;
         this.team2 = team2;
@@ -28,14 +28,14 @@ public class Match {
         this.isLive = null;
     }
 
-    public Match(int id, Team team1, Team team2, int goals_T1, int goals_T2, boolean isLive) {
-        this.id = id;
-        this.team1 = team1;
-        this.team2 = team2;
-        this.goals_T1 = goals_T1;
-        this.goals_T2 = goals_T2;
-        this.isLive = isLive;
-    }
+//    public Match(int id, Team team1, Team team2, int goals_T1, int goals_T2, boolean isLive) {
+//        this.id = id;
+//        this.team1 = team1;
+//        this.team2 = team2;
+//        this.goals_T1 = goals_T1;
+//        this.goals_T2 = goals_T2;
+//        this.isLive = isLive;
+//    }
 
     public int getId() {
         return id;

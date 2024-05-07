@@ -46,6 +46,11 @@ public class Persist {
         this.sessionFactory.getCurrentSession().saveOrUpdate(object);
     }
 
+    public void delete(String tableName) {
+        int rowsAffected = sessionFactory.getCurrentSession().createQuery("DELETE FROM " + tableName).executeUpdate();
+        System.out.println("Rows affected: " + rowsAffected);
+    }
+
     public <T> T loadObject(Class<T> clazz, int oid) {
         return this.getQuerySession().get(clazz, oid);
     }

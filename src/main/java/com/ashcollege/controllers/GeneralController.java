@@ -29,6 +29,10 @@ public class GeneralController {
 
     @PostConstruct
     public void init() {
+        persist.delete("Gamble");
+        persist.delete("Match");
+        persist.delete("Team");
+
         persist.createTeams();
         List<Team> teams = persist.loadTeamList();
         final ArrayList<ArrayList<Match>> league = persist.getLeagueGames();
