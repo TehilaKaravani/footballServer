@@ -35,8 +35,20 @@
         <property name="goals_T1" type="int" column="goals_T1"/>
         <property name="goals_T2" type="int" column="goals_T2"/>
         <property name="isLive" type="boolean" column="is_Live"/>
+    </class>
 
 
+    <class name="com.ashcollege.entities.Gamble" table="gambling" lazy="false">
+        <id name="id" type="int" column="id">
+            <generator class="native"/>
+        </id>
+        <many-to-one name="user" column="user_id"
+                     class="com.ashcollege.entities.User"/>
+        <many-to-one name="match" column="match_id"
+                     class="com.ashcollege.entities.Match"/>
+        <property name="team" type="int" column="team"/>
+        <property name="sum" type="int" column="sum"/>
+        <property name="isCorrect" type="boolean" column="isCorrect"/>
     </class>
 
 

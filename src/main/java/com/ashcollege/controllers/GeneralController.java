@@ -33,31 +33,8 @@ public class GeneralController {
         List<Team> teams = persist.loadTeamList();
         final ArrayList<ArrayList<Match>> league = persist.getLeagueGames();
 
-
-//        new Thread(() -> {
-//            for (int i = 0; i < league.size() + 1; i++) {
-//                System.out.println("-------------------switch----------------");
-//                List<Match> liveMatches = persist.loadLiveMatchList();
-//                for (int j = 0; j < liveMatches.size(); j++) {
-//                    liveMatches.get(j).setIsLive(false);
-//                    persist.save(liveMatches.get(j));
-//                }
-//                if (i < league.size()) {
-//                    for (int j = 0; j < league.get(i).size(); j++) {
-//                        persist.save(league.get(i).get(j));
-//                    }
-//                }
-//                try {
-//                    Thread.sleep(30000);
-//                } catch (InterruptedException e) {
-//                    throw new RuntimeException(e);
-//                }
-//            }
-//        }).start();
-
-        for (int i = 0; i < league.size(); i++){
+        for (int i = 0; i < league.size(); i++) {
             for (int j = 0; j < league.get(i).size(); j++) {
-//                league.get(i).get(j).setIsLive(null);
                 persist.save(league.get(i).get(j));
             }
         }
@@ -67,6 +44,8 @@ public class GeneralController {
                 System.out.println("-------------------switch----------------");
                 List<Match> liveMatches = persist.loadLiveMatchList();
                 for (int j = 0; j < liveMatches.size(); j++) {
+
+
                     liveMatches.get(j).setIsLive(false);
                     persist.save(liveMatches.get(j));
                 }
@@ -84,10 +63,6 @@ public class GeneralController {
             }
         }).start();
 
-
-//        for (int i = 0; i < league.get(0).size(); i++) {
-//            persist.save(league.get(0).get(i));
-//        }
 
 
         new Thread(() -> {
@@ -187,5 +162,15 @@ public class GeneralController {
     @RequestMapping(value = "change-password")
     public UserResponse changePassword(String toChange, String currentPassword, String secret) {
         return persist.changePassword(toChange, currentPassword, secret);
+    }
+
+    @RequestMapping(value = "add-gamble")
+    public BasicResponse addGamble(String secret, int matchId, int teamNum, int sum) {
+        return persist.addGamble(secret, matchId, teamNum, sum);
+    }
+
+    @RequestMapping(value = "get-gamble")
+    public List<Gamble> getGamble() {
+        return persist.loadGambleList();
     }
 }

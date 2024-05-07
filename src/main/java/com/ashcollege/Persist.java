@@ -1,6 +1,7 @@
 package com.ashcollege;
 
 
+import com.ashcollege.entities.Gamble;
 import com.ashcollege.entities.Match;
 import com.ashcollege.entities.Team;
 import com.ashcollege.entities.User;
@@ -61,6 +62,10 @@ public class Persist {
         return this.sessionFactory.getCurrentSession().createQuery("FROM Match").list();
     }
 
+    public <T> List<T> loadGambleList() {
+        return this.sessionFactory.getCurrentSession().createQuery("FROM Gamble").list();
+    }
+
     public List<Match> loadLiveMatchList() {
         List<Match> matches = this.sessionFactory.getCurrentSession().createQuery("FROM Match").list();
         return matches.stream().filter((match) -> {
@@ -68,11 +73,6 @@ public class Persist {
         }).toList();
     }
 
-    public void addMatch (int teamId1,int teamId2) {
-        List <Team> teamList = loadTeamList();
-        Match match = new Match(teamList.get(teamId1 - 1),teamList.get(teamId2 - 1));
-        save(match);
-    }
 
     public ArrayList<ArrayList<Match>> getLeagueGames() {
         List <Team> teams = loadTeamList();
@@ -146,7 +146,7 @@ public class Persist {
                                 Faker faker = new Faker();
                                 User user = new User(username,email, password, faker.random().hex());
                                 save(user);
-                                basicResponse = new UserResponse(true, null, user);
+                                return new UserResponse(true, null, user);
                             }
                         } else {
                             errorCode = ERROR_SIGN_UP_USERNAME_TAKEN;
@@ -170,6 +170,14 @@ public class Persist {
         return (User) this.sessionFactory.getCurrentSession().createQuery(
                         "FROM User WHERE secret = :secret")
                 .setParameter("secret", secret)
+                .setMaxResults(1)
+                .uniqueResult();
+    }
+
+    public Match getMatchById(int id) {
+        return (Match) this.sessionFactory.getCurrentSession().createQuery(
+                        "FROM Match WHERE id = :id")
+                .setParameter("id", id)
                 .setMaxResults(1)
                 .uniqueResult();
     }
@@ -262,7 +270,7 @@ public class Persist {
         for (int i = 0; i < liveMatches.size(); i++) {
             Match game = liveMatches.get(i);
             Faker faker = new Faker();
-            int goalRandom = faker.random().nextInt(0,500);
+            int goalRandom = faker.random().nextInt(0,200);
             if (goalRandom < 20) {
                 if (game.getTeam1().getSkillLevel() > game.getTeam2().getSkillLevel()) {
                     game.addGoal_T1();
@@ -278,5 +286,43 @@ public class Persist {
             }
             save(game);
         }
+    }
+
+
+    public BasicResponse addGamble (String secret, int matchId, int teamNum, int gambleSum){
+        User user;
+        user = getUserBySecret(secret);
+        Integer errorCode;
+        if (user != null) {
+            Gamble gamble;
+            Match match = getMatchById(matchId);
+            if (user.getBalance() >= gambleSum) {
+                if (match.getIsLive() == null) {
+                    user.setBalance(user.getBalance()- gambleSum);
+                    gamble = new Gamble(user,match,teamNum,gambleSum);
+                    save(gamble);
+                    save(user);
+                    return new BasicResponse(true,null);
+                }else {
+                    errorCode = ERROR_GAME_ALREADY_STARTED;
+                }
+            }else {
+                errorCode = ERROR_NOT_ENOUGH_MONEY;
+            }
+        }else {
+            errorCode = ERROR_NO_SUCH_USER;
+        }
+        return new BasicResponse(false,errorCode);
+    }
+
+    public List<Gamble> getGamblingByMatch (int matchId) {
+        return (List<Gamble>) this.sessionFactory.getCurrentSession().createQuery(
+                        "FROM Gamble WHERE match_id = :match_id")
+                .setParameter("match_id", matchId)
+                .list();
+    }
+
+    public void checkGambling () {
+        List<Gamble> gambleList = loadGambleList();
     }
 }
