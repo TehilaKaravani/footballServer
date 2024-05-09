@@ -270,17 +270,17 @@ public class Persist {
     }
 
     public void addGoals() {
-        List<Match> matchList = loadMatchList();
         List<Match> liveMatches = loadLiveMatchList();
 
         for (int i = 0; i < liveMatches.size(); i++) {
             Match game = liveMatches.get(i);
             Faker faker = new Faker();
-            int goalRandom = faker.random().nextInt(0, 200);
-            if (goalRandom < 20) {
-                if (game.getTeam1().getSkillLevel() > game.getTeam2().getSkillLevel()) {
+            int goalRandom = faker.random().nextInt(0, 100);
+            if (goalRandom < 15) {
+                int stormRandom = faker.random().nextInt(0, 100);
+                if ((game.getTeam1().getSkillLevel() > game.getTeam2().getSkillLevel()) && (stormRandom > 40)) {
                     game.addGoal_T1();
-                } else if (game.getTeam1().getSkillLevel() < game.getTeam2().getSkillLevel()) {
+                } else if (game.getTeam1().getSkillLevel() < game.getTeam2().getSkillLevel() && (stormRandom > 40)) {
                     game.addGoal_T2();
                 } else {
                     if (faker.random().nextInt(0, 1) == 0) {
@@ -358,5 +358,24 @@ public class Persist {
                 .list();
     }
 
+    public void setSkills (Match match) {
+        Team winner = match.winner();
+        Team loser = null;
+        if (winner != null) {
+            double teamsRatio = 0;
+            if (winner.getId() == match.getTeam1().getId()) {
+                loser = match.getTeam2();
+                teamsRatio = (double) match.getTeam2().getSkillLevel() / (double) match.getTeam1().getSkillLevel();
+            } else {
+                loser = match.getTeam1();
+                teamsRatio = (double) match.getTeam1().getSkillLevel() / (double) match.getTeam2().getSkillLevel();
+            }
+            Faker faker = new Faker();
+            winner.increaseSkillLevel((int) (faker.random().nextInt(1, 10) * teamsRatio));
+            loser.reduceSkillLevel((int) (faker.random().nextInt(1, 10) * teamsRatio));
+            save(winner);
+            save(loser);
+        }
+    }
 
 }

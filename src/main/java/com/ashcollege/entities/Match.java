@@ -1,5 +1,7 @@
 package com.ashcollege.entities;
 
+import com.github.javafaker.Faker;
+
 public class Match {
     private int id;
     private Team team1;

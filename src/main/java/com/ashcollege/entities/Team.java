@@ -50,9 +50,17 @@ public class Team {
 
     public void calSkillLevel (){
         Faker faker = new Faker();
-        int protection = faker.random().nextInt(0, 100);
-        int attack = faker.random().nextInt(0, 100);
+        int protection = faker.random().nextInt(1, 100);
+        int attack = faker.random().nextInt(1, 100);
         this.skillLevel = (int) ((protection * 0.5) + (attack * 0.5));
+    }
+
+    public void reduceSkillLevel (int value) {
+        this.skillLevel -= value;
+    }
+
+    public void increaseSkillLevel (int value) {
+        this.skillLevel += value;
     }
 
     public int getSkillLevel() {
@@ -62,6 +70,7 @@ public class Team {
     public void setSkillLevel(Integer skillLevel) {
         this.skillLevel = skillLevel;
     }
+
 
     //    public SkillLevel getSkillLevel() {
 //        return skillLevel;

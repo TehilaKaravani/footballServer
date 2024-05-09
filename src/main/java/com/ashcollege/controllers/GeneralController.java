@@ -4,6 +4,7 @@ import com.ashcollege.Persist;
 import com.ashcollege.entities.*;
 import com.ashcollege.responses.BasicResponse;
 import com.ashcollege.responses.UserResponse;
+import com.github.javafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,9 +48,11 @@ public class GeneralController {
             for (int i = 0; i < league.size() + 1; i++) {
                 System.out.println("-------------------switch----------------");
                 List<Match> liveMatches = persist.loadLiveMatchList();
+
                 for (int j = 0; j < liveMatches.size(); j++) {
 
                     persist.checkGambling(liveMatches.get(j));
+                    persist.setSkills(liveMatches.get(j));
 
                     liveMatches.get(j).setIsLive(false);
                     persist.save(liveMatches.get(j));
