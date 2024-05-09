@@ -92,4 +92,13 @@ public class User {
     public void setBalance(int balance) {
         this.balance = balance;
     }
+
+    public void addToBalance (int moneyToAdd) {
+        this.balance = this.balance + moneyToAdd;
+    }
+    public void reduceBalance (int moneyToReduce) {
+        if (moneyToReduce <= this.balance) {
+            this.balance = this.balance - moneyToReduce;
+        }
+    }
 }

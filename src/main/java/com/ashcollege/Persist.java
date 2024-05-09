@@ -47,8 +47,7 @@ public class Persist {
     }
 
     public void delete(String tableName) {
-        int rowsAffected = sessionFactory.getCurrentSession().createQuery("DELETE FROM " + tableName).executeUpdate();
-        System.out.println("Rows affected: " + rowsAffected);
+        sessionFactory.getCurrentSession().createQuery("DELETE FROM " + tableName).executeUpdate();
     }
 
     public <T> T loadObject(Class<T> clazz, int oid) {
@@ -80,7 +79,7 @@ public class Persist {
 
 
     public ArrayList<ArrayList<Match>> getLeagueGames() {
-        List <Team> teams = loadTeamList();
+        List<Team> teams = loadTeamList();
         ArrayList<ArrayList<Match>> league = new ArrayList<>();
         int rounds = teams.size() - 1;
         int matchesPerRound = teams.size() / 2;
@@ -124,14 +123,14 @@ public class Persist {
                 errorCode = ERROR_LOGIN_WRONG_CREDS;
             }
             basicResponse = new BasicResponse(false, errorCode);
-        }else {
+        } else {
             basicResponse = new UserResponse(true, errorCode, user);
         }
         return basicResponse;
     }
 
 
-    private boolean isUsernameExist (String username) {
+    private boolean isUsernameExist(String username) {
         User userList = (User) this.sessionFactory.getCurrentSession().createQuery(
                         "FROM User WHERE username = :username")
                 .setParameter("username", username)
@@ -139,7 +138,8 @@ public class Persist {
 
         return (userList != null);
     }
-    public BasicResponse signUp(String username,String email, String password) {
+
+    public BasicResponse signUp(String username, String email, String password) {
         BasicResponse basicResponse = null;
         Integer errorCode = null;
         if (username != null && !username.isEmpty()) {
@@ -149,14 +149,14 @@ public class Persist {
                         if (!isUsernameExist(username)) {
                             if (isPasswordStrong(password)) {
                                 Faker faker = new Faker();
-                                User user = new User(username,email, password, faker.random().hex());
+                                User user = new User(username, email, password, faker.random().hex());
                                 save(user);
                                 return new UserResponse(true, null, user);
                             }
                         } else {
                             errorCode = ERROR_SIGN_UP_USERNAME_TAKEN;
                         }
-                    }else {
+                    } else {
                         errorCode = ERROR_EMAIL_FORMAT;
                     }
                 } else {
@@ -205,7 +205,7 @@ public class Persist {
         }
     }
 
-    public boolean isEmailCorrect (String email) {
+    public boolean isEmailCorrect(String email) {
         return email.contains("@") && email.contains(".") && (email.lastIndexOf(".") - email.indexOf("@") > 1) && (email.indexOf("@") != 0);
     }
 
@@ -218,12 +218,12 @@ public class Persist {
 
         Integer errorCode = null;
         UserResponse userResponse;
-        switch (category){
+        switch (category) {
             case "username":
                 if (!isUsernameExist(toChange)) {
                     user.setUsername(toChange);
                     save(user);
-                }else {
+                } else {
                     errorCode = ERROR_SIGN_UP_USERNAME_TAKEN;
                 }
                 break;
@@ -231,20 +231,20 @@ public class Persist {
                 if (isEmailCorrect(toChange)) {
                     user.setEmail(toChange);
                     save(user);
-                }else {
+                } else {
                     errorCode = ERROR_EMAIL_FORMAT;
                 }
                 break;
         }
-        if (errorCode == null){
-            userResponse = new UserResponse(true,errorCode,user);
-        }else {
-            userResponse = new UserResponse(false,errorCode,user);
+        if (errorCode == null) {
+            userResponse = new UserResponse(true, errorCode, user);
+        } else {
+            userResponse = new UserResponse(false, errorCode, user);
         }
         return userResponse;
     }
 
-    public UserResponse changePassword (String toChange,String currentPassword, String secret) {
+    public UserResponse changePassword(String toChange, String currentPassword, String secret) {
         User user = getUserBySecret(secret);
         Integer errorCode = null;
         UserResponse userResponse;
@@ -254,37 +254,38 @@ public class Persist {
             if (isPasswordStrong(toChange)) {
                 user.setPassword(toChange);
                 save(user);
-            }else {
+            } else {
                 errorCode = ERROR_WEAK_PASSWORD;
             }
-        }else {
+        } else {
             errorCode = ERROR_SIGN_UP_PASSWORDS_DONT_MATCH;
         }
 
-        if (errorCode == null){
-            userResponse = new UserResponse(true,errorCode,user);
-        }else {
-            userResponse = new UserResponse(false,errorCode,user);
+        if (errorCode == null) {
+            userResponse = new UserResponse(true, errorCode, user);
+        } else {
+            userResponse = new UserResponse(false, errorCode, user);
         }
         return userResponse;
     }
-    public void addGoals (){
+
+    public void addGoals() {
         List<Match> matchList = loadMatchList();
         List<Match> liveMatches = loadLiveMatchList();
 
         for (int i = 0; i < liveMatches.size(); i++) {
             Match game = liveMatches.get(i);
             Faker faker = new Faker();
-            int goalRandom = faker.random().nextInt(0,200);
+            int goalRandom = faker.random().nextInt(0, 200);
             if (goalRandom < 20) {
                 if (game.getTeam1().getSkillLevel() > game.getTeam2().getSkillLevel()) {
                     game.addGoal_T1();
-                }else if (game.getTeam1().getSkillLevel() < game.getTeam2().getSkillLevel()) {
+                } else if (game.getTeam1().getSkillLevel() < game.getTeam2().getSkillLevel()) {
                     game.addGoal_T2();
-                }else {
-                    if (faker.random().nextInt(0,1) == 0) {
+                } else {
+                    if (faker.random().nextInt(0, 1) == 0) {
                         game.addGoal_T1();
-                    }else {
+                    } else {
                         game.addGoal_T2();
                     }
                 }
@@ -294,7 +295,7 @@ public class Persist {
     }
 
 
-    public BasicResponse addGamble (String secret, int matchId, int teamNum, int gambleSum){
+    public BasicResponse addGamble(String secret, int matchId, int teamNum, int gambleSum) {
         User user;
         user = getUserBySecret(secret);
         Integer errorCode;
@@ -303,31 +304,59 @@ public class Persist {
             Match match = getMatchById(matchId);
             if (user.getBalance() >= gambleSum) {
                 if (match.getIsLive() == null) {
-                    user.setBalance(user.getBalance()- gambleSum);
-                    gamble = new Gamble(user,match,teamNum,gambleSum);
+                    user.reduceBalance(gambleSum);
+                    gamble = new Gamble(user, match, teamNum, gambleSum);
                     save(gamble);
                     save(user);
-                    return new BasicResponse(true,null);
-                }else {
+                    return new BasicResponse(true, null);
+                } else {
                     errorCode = ERROR_GAME_ALREADY_STARTED;
                 }
-            }else {
+            } else {
                 errorCode = ERROR_NOT_ENOUGH_MONEY;
             }
-        }else {
+        } else {
             errorCode = ERROR_NO_SUCH_USER;
         }
-        return new BasicResponse(false,errorCode);
+        return new BasicResponse(false, errorCode);
     }
 
-    public List<Gamble> getGamblingByMatch (int matchId) {
+    public List<Gamble> getGamblingByMatch(int matchId) {
         return (List<Gamble>) this.sessionFactory.getCurrentSession().createQuery(
                         "FROM Gamble WHERE match_id = :match_id")
                 .setParameter("match_id", matchId)
                 .list();
     }
 
-    public void checkGambling () {
-        List<Gamble> gambleList = loadGambleList();
+    public void checkGambling(Match match) {
+        boolean isCorrect = false;
+        double ratio;
+        List<Gamble> gambleList = getGamblingByMatch(match.getId());
+        for (Gamble gamble : gambleList) {
+            if (match.winner() == match.getTeam1() && (gamble.getTeam() == 1)) {
+//                ratio =
+                isCorrect = true;
+            } else if (match.winner() == match.getTeam2() && (gamble.getTeam() == 2)) {
+                isCorrect = true;
+            } else if (match.winner() == null && (gamble.getTeam() == 0)) {
+                isCorrect = true;
+            }
+            gamble.setIsCorrect(isCorrect);
+//            if (isCorrect) {
+//                gamble.getUser().addToBalance(//ratio);
+//            }
+            save(gamble);
+        }
+
     }
+
+    public List<Gamble> getUserGambling(String secret) {
+        User user = getUserBySecret(secret);
+        return (List<Gamble>) this.sessionFactory.getCurrentSession().createQuery(
+                        "FROM Gamble WHERE user_id = :user_id")
+                .setParameter("user_id", user.getId())
+                .list();
+    }
+
+
 }

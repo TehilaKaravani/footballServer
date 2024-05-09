@@ -49,6 +49,7 @@ public class GeneralController {
                 List<Match> liveMatches = persist.loadLiveMatchList();
                 for (int j = 0; j < liveMatches.size(); j++) {
 
+                    persist.checkGambling(liveMatches.get(j));
 
                     liveMatches.get(j).setIsLive(false);
                     persist.save(liveMatches.get(j));
@@ -177,4 +178,10 @@ public class GeneralController {
     public List<Gamble> getGamble() {
         return persist.loadGambleList();
     }
+
+    @RequestMapping(value = "get-user-gambling")
+    public List<Gamble> getUserGambling(String secret) {
+        return persist.getUserGambling(secret);
+    }
+
 }
