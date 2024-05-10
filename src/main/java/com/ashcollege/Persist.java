@@ -295,7 +295,7 @@ public class Persist {
     }
 
 
-    public BasicResponse addGamble(String secret, int matchId, int teamNum, int gambleSum) {
+    public BasicResponse addGamble(String secret, int matchId, int teamNum, int gambleSum ,double ratio) {
         User user;
         user = getUserBySecret(secret);
         Integer errorCode;
@@ -305,7 +305,7 @@ public class Persist {
             if (user.getBalance() >= gambleSum) {
                 if (match.getIsLive() == null) {
                     user.reduceBalance(gambleSum);
-                    gamble = new Gamble(user, match, teamNum, gambleSum);
+                    gamble = new Gamble(user, match, teamNum, gambleSum,ratio);
                     save(gamble);
                     save(user);
                     return new BasicResponse(true, null);
@@ -334,7 +334,6 @@ public class Persist {
         List<Gamble> gambleList = getGamblingByMatch(match.getId());
         for (Gamble gamble : gambleList) {
             if (match.winner() == match.getTeam1() && (gamble.getTeam() == 1)) {
-//                ratio =
                 isCorrect = true;
             } else if (match.winner() == match.getTeam2() && (gamble.getTeam() == 2)) {
                 isCorrect = true;
@@ -342,9 +341,10 @@ public class Persist {
                 isCorrect = true;
             }
             gamble.setIsCorrect(isCorrect);
-//            if (isCorrect) {
-//                gamble.getUser().addToBalance(//ratio);
-//            }
+            if (isCorrect) {
+                gamble.getUser().addToBalance(gamble.getRatio() * gamble.getSum());
+                save(gamble.getUser());
+            }
             save(gamble);
         }
 

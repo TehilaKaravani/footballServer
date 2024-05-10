@@ -11,7 +11,7 @@
         <property name="email" type="string" column="email"/>
         <property name="password" type="string" column="password"/>
         <property name="secret" type="string" column="secret"/>
-        <property name="balance" type="int" column="balance"/>
+        <property name="balance" type="double" column="balance"/>
     </class>
 
 
@@ -48,6 +48,7 @@
                      class="com.ashcollege.entities.Match"/>
         <property name="team" type="int" column="team"/>
         <property name="sum" type="int" column="sum"/>
+        <property name="ratio" type="double" column="ratio"/>
         <property name="isCorrect" type="boolean" column="is_Correct"/>
     </class>
 

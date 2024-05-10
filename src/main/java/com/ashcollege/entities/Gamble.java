@@ -6,30 +6,20 @@ public class Gamble {
     private Match match;
     private int team;
     private int sum;
+    private double ratio;
     private Boolean isCorrect;
-//    private double ratio;
 
     public Gamble() {
 
     }
 
-    public Gamble(User user, Match match, int team, int sum) {
+    public Gamble(User user, Match match, int team, int sum,double ratio) {
         this.user = user;
         this.match = match;
         this.team = team;
         this.sum = sum;
         this.isCorrect = null;
-//        switch (team){
-//            case 0:
-//                ratio = 100 / (match.getTeam1().getSkillLevel() + match.getTeam2().getSkillLevel());
-//                break;
-//            case 1:
-//                ratio = 100 / match.getTeam1().getSkillLevel();
-//                break;
-//            case 2:
-//                ratio = 100 / match.getTeam2().getSkillLevel();
-//                break;
-//        }
+        this.ratio = ratio;
     }
 
     public int getId() {
@@ -78,6 +68,14 @@ public class Gamble {
 
     public void setIsCorrect(Boolean correct) {
         isCorrect = correct;
+    }
+
+    public double getRatio() {
+        return ratio;
+    }
+
+    public void setRatio(double ratio) {
+        this.ratio = ratio;
     }
 
     @Override

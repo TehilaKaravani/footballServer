@@ -5,30 +5,19 @@ import com.github.javafaker.Faker;
 public class Team {
     private int id;
     private String name;
-
-//    private SkillLevel skillLevel;
-
     private int skillLevel;
 
     public Team() {
-//        this.skillLevel = new SkillLevel();
         calSkillLevel();
     }
 
     public Team(String name) {
         this.name = name;
-//        this.skillLevel = new SkillLevel();
         calSkillLevel();
     }
 
-//    public Team(String name,SkillLevel skillLevel) {
-//        this.name = name;
-//        this.skillLevel = skillLevel;
-//    }
-
     public Team(int id) {
         this.id = id;
-//        this.skillLevel = new SkillLevel();
         calSkillLevel();
     }
 
@@ -50,17 +39,23 @@ public class Team {
 
     public void calSkillLevel (){
         Faker faker = new Faker();
-        int protection = faker.random().nextInt(1, 100);
-        int attack = faker.random().nextInt(1, 100);
+        int protection = faker.random().nextInt(20, 100);
+        int attack = faker.random().nextInt(20, 100);
         this.skillLevel = (int) ((protection * 0.5) + (attack * 0.5));
     }
 
     public void reduceSkillLevel (int value) {
         this.skillLevel -= value;
+        if (this.skillLevel < 20) {
+            this.skillLevel = 20;
+        }
     }
 
     public void increaseSkillLevel (int value) {
         this.skillLevel += value;
+        if (this.skillLevel > 100) {
+            this.skillLevel = 100;
+        }
     }
 
     public int getSkillLevel() {

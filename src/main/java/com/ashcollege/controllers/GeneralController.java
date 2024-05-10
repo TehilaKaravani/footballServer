@@ -173,8 +173,8 @@ public class GeneralController {
     }
 
     @RequestMapping(value = "add-gamble")
-    public BasicResponse addGamble(String secret, int matchId, int teamNum, int sum) {
-        return persist.addGamble(secret, matchId, teamNum, sum);
+    public BasicResponse addGamble(String secret, int matchId, int teamNum, int sum,double ratio) {
+        return persist.addGamble(secret, matchId, teamNum, sum,ratio);
     }
 
     @RequestMapping(value = "get-gamble")

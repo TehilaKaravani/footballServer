@@ -9,7 +9,7 @@ public class User {
     private String email;
     private String password;
     private String secret;
-    private int balance;
+    private double balance;
 
     public User(String username,String email, String password, String secret) {
         this.username = username;
@@ -85,18 +85,18 @@ public class User {
         this.email = email;
     }
 
-    public int getBalance() {
+    public double getBalance() {
         return balance;
     }
 
-    public void setBalance(int balance) {
+    public void setBalance(double balance) {
         this.balance = balance;
     }
 
-    public void addToBalance (int moneyToAdd) {
+    public void addToBalance (double moneyToAdd) {
         this.balance = this.balance + moneyToAdd;
     }
-    public void reduceBalance (int moneyToReduce) {
+    public void reduceBalance (double moneyToReduce) {
         if (moneyToReduce <= this.balance) {
             this.balance = this.balance - moneyToReduce;
         }
