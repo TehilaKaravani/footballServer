@@ -80,15 +80,20 @@ public class GeneralController {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                for (SseEmitter emitter : clients) {
-                    try {
-                        emitter.send(persist.loadMatchList());
-                        persist.addGoals();
-                    } catch (Exception e) {
+                try {
+                    for (SseEmitter emitter : clients) {
+                        try {
+                            emitter.send(persist.loadMatchList());
+                            persist.addGoals();
+                        } catch (Exception e) {
 //                        System.out.println("Client leave");
 //                        clients.remove(eventClients);
+                        }
                     }
+                }catch (Exception e) {
+                    System.out.println("error in for" + e);
                 }
+
             }
         }).start();
     }

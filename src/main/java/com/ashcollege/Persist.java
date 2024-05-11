@@ -276,7 +276,7 @@ public class Persist {
             Match game = liveMatches.get(i);
             Faker faker = new Faker();
             int goalRandom = faker.random().nextInt(0, 100);
-            if (goalRandom < 15) {
+            if (goalRandom <= 15) {
                 int stormRandom = faker.random().nextInt(0, 100);
                 if ((game.getTeam1().getSkillLevel() > game.getTeam2().getSkillLevel()) && (stormRandom > 40)) {
                     game.addGoal_T1();
