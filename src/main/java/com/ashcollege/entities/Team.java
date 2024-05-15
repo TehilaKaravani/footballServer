@@ -1,6 +1,7 @@
 package com.ashcollege.entities;
 
 import com.github.javafaker.Faker;
+import static com.ashcollege.utils.Constants.*;
 
 public class Team {
     private int id;
@@ -39,22 +40,22 @@ public class Team {
 
     public void calSkillLevel (){
         Faker faker = new Faker();
-        int protection = faker.random().nextInt(20, 100);
-        int attack = faker.random().nextInt(20, 100);
-        this.skillLevel = (int) ((protection * 0.5) + (attack * 0.5));
+        int protection = faker.random().nextInt(MIN_LEVEL, MAX_LEVEL);
+        int attack = faker.random().nextInt(MIN_LEVEL, MAX_LEVEL);
+        this.skillLevel = (int) ((protection * PROTECTION_RATIO) + (attack * ATTACK_RATIO));
     }
 
     public void reduceSkillLevel (int value) {
         this.skillLevel -= value;
-        if (this.skillLevel < 20) {
-            this.skillLevel = 20;
+        if (this.skillLevel < MIN_LEVEL) {
+            this.skillLevel = MIN_LEVEL;
         }
     }
 
     public void increaseSkillLevel (int value) {
         this.skillLevel += value;
-        if (this.skillLevel > 100) {
-            this.skillLevel = 100;
+        if (this.skillLevel > MAX_LEVEL) {
+            this.skillLevel = MAX_LEVEL;
         }
     }
 
@@ -64,23 +65,5 @@ public class Team {
 
     public void setSkillLevel(Integer skillLevel) {
         this.skillLevel = skillLevel;
-    }
-
-
-    //    public SkillLevel getSkillLevel() {
-//        return skillLevel;
-//    }
-
-//    public void setSkillLevel(SkillLevel skillLevel) {
-//        this.skillLevel = skillLevel;
-//    }
-
-    @Override
-    public String toString() {
-        return "Team{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", skillLevel=" + skillLevel +
-                '}';
     }
 }

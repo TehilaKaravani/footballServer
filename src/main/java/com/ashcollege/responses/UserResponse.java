@@ -10,15 +10,7 @@ public class UserResponse extends BasicResponse {
         this.user = user;
     }
 
-    public UserResponse(boolean success, Integer errorCode) {
-        super(success, errorCode);
-    }
-
     public User getUser() {
         return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 }

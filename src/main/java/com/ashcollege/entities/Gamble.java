@@ -59,7 +59,9 @@ public class Gamble {
     }
 
     public void setSum(int sum) {
-        this.sum = sum;
+        if (sum >= 0) {
+            this.sum = sum;
+        }
     }
 
     public Boolean getIsCorrect() {
@@ -76,17 +78,5 @@ public class Gamble {
 
     public void setRatio(double ratio) {
         this.ratio = ratio;
-    }
-
-    @Override
-    public String toString() {
-        return "Gamble{" +
-                "id=" + id +
-                ", user=" + user +
-                ", match=" + match +
-                ", team=" + team +
-                ", sum=" + sum +
-                ", isCorrect=" + isCorrect +
-                '}';
     }
 }

@@ -13,15 +13,6 @@ public class Match {
     public Match() {
 
     }
-
-//    public Match(int id, Team team1, Team team2, int goals_T1, int goals_T2) {
-//        this.id = id;
-//        this.team1 = team1;
-//        this.team2 = team2;
-//        this.goals_T1 = goals_T1;
-//        this.goals_T2 = goals_T2;
-//        this.isLive = null;
-//    }
     public Match(Team team1, Team team2) {
         this.team1 = team1;
         this.team2 = team2;
@@ -29,16 +20,6 @@ public class Match {
         this.goals_T2 = 0;
         this.isLive = null;
     }
-
-//    public Match(int id, Team team1, Team team2, int goals_T1, int goals_T2, boolean isLive) {
-//        this.id = id;
-//        this.team1 = team1;
-//        this.team2 = team2;
-//        this.goals_T1 = goals_T1;
-//        this.goals_T2 = goals_T2;
-//        this.isLive = isLive;
-//    }
-
     public int getId() {
         return id;
     }
@@ -79,7 +60,6 @@ public class Match {
         this.goals_T2 = goals_T2;
     }
 
-
     public Boolean getIsLive() {
         return isLive;
     }
@@ -96,18 +76,6 @@ public class Match {
             winner = this.team2;
         }
         return winner;
-    }
-
-    @Override
-    public String toString() {
-        return "Match{" +
-                "id=" + id +
-                ", team1=" + team1 +
-                ", team2=" + team2 +
-                ", goals_T1=" + goals_T1 +
-                ", goals_T2=" + goals_T2 +
-                ", isLive=" + isLive +
-                '}';
     }
 
     public void addGoal_T1() {

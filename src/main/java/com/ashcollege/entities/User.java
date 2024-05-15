@@ -1,7 +1,7 @@
 package com.ashcollege.entities;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.github.javafaker.Faker;
+import static com.ashcollege.utils.Constants.*;
 
 public class User {
     private int id;
@@ -11,28 +11,16 @@ public class User {
     private String secret;
     private double balance;
 
-    public User(String username,String email, String password, String secret) {
+    public User(String username,String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;
-        this.secret = secret;
-        this.balance = 1000;
-    }
-
-    public User(int id, String username, String password) {
-        this(username, password);
-        this.id = id;
-        this.balance = 1000;
-    }
-
-    public User(String username, String password) {
-        this.username = username;
-        this.password = password;
-        this.balance = 1000;
+        Faker faker = new Faker();
+        this.secret = faker.random().hex();
+        this.balance = INITIAL_BALANCE;
     }
 
     public User() {
-        this.balance = 1000;
     }
 
 
@@ -41,7 +29,9 @@ public class User {
     }
 
     public void setUsername(String username) {
-        this.username = username;
+        if (username != null && !username.isEmpty()) {
+            this.username = username;
+        }
     }
 
     public String getPassword() {
@@ -50,14 +40,6 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public boolean isSameUsername (String username) {
-        return this.username.equals(username);
-    }
-
-    public boolean isSameCreds (String username, String password) {
-        return this.username.equals(username) && this.password.equals(password);
     }
 
     public int getId() {
@@ -76,13 +58,18 @@ public class User {
         this.secret = secret;
     }
 
-
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        if (isEmailCorrect(email)) {
+            this.email = email;
+        }
+    }
+
+    private boolean isEmailCorrect(String email) {
+        return email.contains("@") && email.contains(".") && (email.lastIndexOf(".") - email.indexOf("@") > 1) && (email.indexOf("@") != 0);
     }
 
     public double getBalance() {

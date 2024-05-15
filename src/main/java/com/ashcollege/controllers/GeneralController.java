@@ -4,7 +4,7 @@ import com.ashcollege.Persist;
 import com.ashcollege.entities.*;
 import com.ashcollege.responses.BasicResponse;
 import com.ashcollege.responses.UserResponse;
-import com.github.javafaker.Faker;
+import com.ashcollege.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,17 +16,17 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.ashcollege.utils.Constants.CYCLE_TIME;
 import static com.ashcollege.utils.Errors.*;
 
 @RestController
 public class GeneralController {
 
-
     @Autowired
     private Persist persist;
 
-
     private final List<SseEmitter> clients = new ArrayList<>();
+
 
     @PostConstruct
     public void init() {
@@ -35,7 +35,6 @@ public class GeneralController {
         persist.delete("Team");
 
         persist.createTeams();
-        List<Team> teams = persist.loadTeamList();
         final ArrayList<ArrayList<Match>> league = persist.getLeagueGames();
 
         for (int i = 0; i < league.size(); i++) {
@@ -64,13 +63,12 @@ public class GeneralController {
                     }
                 }
                 try {
-                    Thread.sleep(30000);
+                    Thread.sleep(CYCLE_TIME * 1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
             }
         }).start();
-
 
 
         new Thread(() -> {
@@ -82,16 +80,10 @@ public class GeneralController {
                 }
                 try {
                     for (SseEmitter emitter : clients) {
-                        try {
-                            emitter.send(persist.loadMatchList());
-                            persist.addGoals();
-                        } catch (Exception e) {
-//                        System.out.println("Client leave");
-//                        clients.remove(eventClients);
-                        }
+                        emitter.send(persist.loadMatchList());
+                        persist.addGoals();
                     }
-                }catch (Exception e) {
-                    System.out.println("error in for" + e);
+                } catch (Exception e) {
                 }
 
             }
@@ -106,11 +98,9 @@ public class GeneralController {
 
     @RequestMapping(value = "/sign-up", method = {RequestMethod.GET, RequestMethod.POST})
     public BasicResponse signUp(String username, String email, String password, String password2) {
-        Integer errorCode = null;
+        int errorCode;
         if (password.equals(password2)) {
-            //check strong password--------------------------------
             return persist.signUp(username, email, password);
-
         } else {
             errorCode = ERROR_SIGN_UP_PASSWORDS_DONT_MATCH;
         }
@@ -118,40 +108,21 @@ public class GeneralController {
     }
 
 
-    @RequestMapping(value = "/login", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "/login", method = {RequestMethod.GET,RequestMethod.POST})
     public BasicResponse login(String email, String password) {
         return persist.login(email, password);
     }
 
-
-    @RequestMapping(value = "get-users")
-    public List<User> getUsers() {
-        return persist.loadUserList();
-    }
-
-    @RequestMapping(value = "get-teams")
-    public List<Team> getTeams() {
-        return persist.loadTeamList();
-    }
-
-    @RequestMapping(value = "get-matches")
-    public List<Match> getMatches() {
-        List<Match> matchList = persist.loadMatchList();
-        return matchList;
-    }
-
-    @RequestMapping(value = "get-user-by-secret")
+    @RequestMapping(value = "get-user-by-secret", method = {RequestMethod.GET, RequestMethod.POST})
     public BasicResponse getUserBySecret(String secret) {
-        BasicResponse basicResponse = null;
+        BasicResponse basicResponse;
         boolean success = false;
-        Integer errorCode = null;
-        User user = null;
+        User user;
         user = persist.getUserBySecret(secret);
         if (user != null) {
-            basicResponse = new UserResponse(true, errorCode, user);
+            basicResponse = new UserResponse(true, null, user);
         } else {
-            errorCode = ERROR_LOGIN_WRONG_CREDS;
-            basicResponse = new BasicResponse(success, errorCode);
+            basicResponse = new BasicResponse(success, ERROR_LOGIN_WRONG_CREDS);
         }
         return basicResponse;
     }
@@ -167,27 +138,22 @@ public class GeneralController {
         }
     }
 
-    @RequestMapping(value = "change-username-or-email")
+    @RequestMapping(value = "change-username-or-email", method = {RequestMethod.GET, RequestMethod.POST})
     public UserResponse changeUsernameOrEmail(String category, String toChange, String secret) {
         return persist.changeUsernameOrEmail(category, toChange, secret);
     }
 
-    @RequestMapping(value = "change-password")
+    @RequestMapping(value = "change-password", method = {RequestMethod.GET, RequestMethod.POST})
     public UserResponse changePassword(String toChange, String currentPassword, String secret) {
         return persist.changePassword(toChange, currentPassword, secret);
     }
 
-    @RequestMapping(value = "add-gamble")
-    public BasicResponse addGamble(String secret, int matchId, int teamNum, int sum,double ratio) {
-        return persist.addGamble(secret, matchId, teamNum, sum,ratio);
+    @RequestMapping(value = "add-gamble", method = {RequestMethod.GET, RequestMethod.POST})
+    public BasicResponse addGamble(String secret, int matchId, int teamNum, int sum, double ratio) {
+        return persist.addGamble(secret, matchId, teamNum, sum, ratio);
     }
 
-    @RequestMapping(value = "get-gamble")
-    public List<Gamble> getGamble() {
-        return persist.loadGambleList();
-    }
-
-    @RequestMapping(value = "get-user-gambling")
+    @RequestMapping(value = "get-user-gambling", method = {RequestMethod.GET, RequestMethod.POST})
     public List<Gamble> getUserGambling(String secret) {
         return persist.getUserGambling(secret);
     }
