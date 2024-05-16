@@ -14,6 +14,17 @@ public class Constants {
     public static final double ATTACK_RATIO = 0.5;
     public static final double INITIAL_BALANCE = 1000;
 
+    public static final int TEAM_1 = 1;
+    public static final int TEAM_2 = 2;
+
+    public static final int DRAW = 0;
+
+    public static final int CONNECTION_ֹTIMEOUT = 10 * 60 * 1000;
+
+
+
+
+
 
 
 

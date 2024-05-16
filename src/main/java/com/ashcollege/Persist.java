@@ -316,11 +316,11 @@ public class Persist {
         boolean isCorrect = false;
         List<Gamble> gambleList = getGamblingByMatch(match.getId());
         for (Gamble gamble : gambleList) {
-            if (match.winner() == match.getTeam1() && (gamble.getTeam() == 1)) {
+            if (match.winner() == match.getTeam1() && (gamble.getTeam() == TEAM_1)) {
                 isCorrect = true;
-            } else if (match.winner() == match.getTeam2() && (gamble.getTeam() == 2)) {
+            } else if (match.winner() == match.getTeam2() && (gamble.getTeam() == TEAM_2)) {
                 isCorrect = true;
-            } else if (match.winner() == null && (gamble.getTeam() == 0)) {
+            } else if (match.winner() == null && (gamble.getTeam() == DRAW)) {
                 isCorrect = true;
             }
             gamble.setIsCorrect(isCorrect);

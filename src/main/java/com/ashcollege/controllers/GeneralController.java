@@ -16,7 +16,7 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ashcollege.utils.Constants.CYCLE_TIME;
+import static com.ashcollege.utils.Constants.*;
 import static com.ashcollege.utils.Errors.*;
 
 @RestController
@@ -130,7 +130,7 @@ public class GeneralController {
     @RequestMapping(value = "start-streaming", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter CreateStreamingSession() {
         try {
-            SseEmitter sseEmitter = new SseEmitter((long) (10 * 60 * 1000));
+            SseEmitter sseEmitter = new SseEmitter((long) (CONNECTION_ֹTIMEOUT));
             clients.add(sseEmitter);
             return sseEmitter;
         } catch (Exception e) {
