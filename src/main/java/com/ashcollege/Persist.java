@@ -231,7 +231,7 @@ public class Persist {
         Integer errorCode = null;
         UserResponse userResponse;
         User user = null;
-        if (toChange != null && !toChange.isEmpty() && secret != null && !secret.isEmpty()) {
+        if (toChange != null && !toChange.isEmpty() && secret != null && !secret.isEmpty() && currentPassword != null) {
             user = getUserBySecret(secret);
             if (user.getPassword().equals(currentPassword)) {
                 if (isPasswordStrong(toChange)) {

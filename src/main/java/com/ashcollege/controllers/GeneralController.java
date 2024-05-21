@@ -30,9 +30,9 @@ public class GeneralController {
 
     @PostConstruct
     public void init() {
-        persist.delete("Gamble");
-        persist.delete("Match");
-        persist.delete("Team");
+//        persist.delete("Gamble");
+//        persist.delete("Match");
+//        persist.delete("Team");
 
         persist.createTeams();
         final ArrayList<ArrayList<Match>> league = persist.getLeagueGames();
@@ -79,9 +79,9 @@ public class GeneralController {
                     throw new RuntimeException(e);
                 }
                 try {
+                    persist.addGoals();
                     for (SseEmitter emitter : clients) {
                         emitter.send(persist.loadMatchList());
-                        persist.addGoals();
                     }
                 } catch (Exception e) {
                 }
@@ -96,7 +96,7 @@ public class GeneralController {
         return "Hello From Server";
     }
 
-    @RequestMapping(value = "/sign-up", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "/sign-up", method = {RequestMethod.POST})
     public BasicResponse signUp(String username, String email, String password, String password2) {
         int errorCode;
         if (password.equals(password2)) {
@@ -108,12 +108,12 @@ public class GeneralController {
     }
 
 
-    @RequestMapping(value = "/login", method = {RequestMethod.GET,RequestMethod.POST})
+    @RequestMapping(value = "/login", method = {RequestMethod.POST})
     public BasicResponse login(String email, String password) {
         return persist.login(email, password);
     }
 
-    @RequestMapping(value = "get-user-by-secret", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "get-user-by-secret", method = {RequestMethod.POST})
     public BasicResponse getUserBySecret(String secret) {
         BasicResponse basicResponse;
         boolean success = false;
@@ -138,17 +138,17 @@ public class GeneralController {
         }
     }
 
-    @RequestMapping(value = "change-username-or-email", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "change-username-or-email", method = {RequestMethod.POST})
     public UserResponse changeUsernameOrEmail(String category, String toChange, String secret) {
         return persist.changeUsernameOrEmail(category, toChange, secret);
     }
 
-    @RequestMapping(value = "change-password", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "change-password", method = {RequestMethod.POST})
     public UserResponse changePassword(String toChange, String currentPassword, String secret) {
         return persist.changePassword(toChange, currentPassword, secret);
     }
 
-    @RequestMapping(value = "add-gamble", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "add-gamble", method = {RequestMethod.POST})
     public BasicResponse addGamble(String secret, int matchId, int teamNum, int sum, double ratio) {
         return persist.addGamble(secret, matchId, teamNum, sum, ratio);
     }
