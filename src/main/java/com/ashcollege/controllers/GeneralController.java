@@ -81,7 +81,10 @@ public class GeneralController {
                 try {
                     persist.addGoals();
                     for (SseEmitter emitter : clients) {
-                        emitter.send(persist.loadMatchList());
+                        try {
+                            emitter.send(persist.loadMatchList());
+                        }catch (Exception e) {
+                        }
                     }
                 } catch (Exception e) {
                 }
