@@ -33,48 +33,12 @@ public class GeneralController {
 
     @PostConstruct
     public void init() {
-//        persist.delete("Gamble");
-//        persist.delete("Match");
-//        persist.delete("Team");
+        persist.delete("Gamble");
+        persist.delete("Match");
+        persist.delete("Team");
 
         persist.createTeams();
-        final ArrayList<ArrayList<Match>> league = persist.getLeagueGames();
-
-        for (int i = 0; i < league.size(); i++) {
-            for (int j = 0; j < league.get(i).size(); j++) {
-                persist.save(league.get(i).get(j));
-            }
-        }
-
-        new Thread(() -> {
-
-            for (int i = 0; i < league.size() + 1; i++) {
-                remainingTime = CYCLE_TIME - 1;
-                System.out.println("-------------------switch----------------");
-                List<Match> liveMatches = persist.loadLiveMatchList();
-
-                for (int j = 0; j < liveMatches.size(); j++) {
-
-                    persist.checkGambling(liveMatches.get(j));
-                    persist.setSkills(liveMatches.get(j));
-
-                    liveMatches.get(j).setIsLive(false);
-                    persist.save(liveMatches.get(j));
-                }
-                if (i < league.size()) {
-                    for (int j = 0; j < league.get(i).size(); j++) {
-                        league.get(i).get(j).setIsLive(true);
-                        persist.save(league.get(i).get(j));
-                    }
-                }
-                try {
-                    Thread.sleep(CYCLE_TIME * 1000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }).start();
-
+        createSeason();
 
         new Thread(() -> {
             while (true) {
@@ -105,9 +69,43 @@ public class GeneralController {
     }
 
 
-    @RequestMapping(value = "/", method = {RequestMethod.GET, RequestMethod.POST})
-    public Object hello() {
-        return "Hello From Server";
+    public void createSeason() {
+        System.out.println("****createSeason****");
+        final ArrayList<ArrayList<Match>> league = persist.getLeagueGames();
+
+        for (int i = 0; i < league.size(); i++) {
+            for (int j = 0; j < league.get(i).size(); j++) {
+                persist.save(league.get(i).get(j));
+            }
+        }
+
+        new Thread(() -> {
+            for (int i = 0; i < league.size() + 1; i++) {
+                remainingTime = CYCLE_TIME - 1;
+                System.out.println("-------------------switch----------------");
+                List<Match> liveMatches = persist.loadLiveMatchList();
+
+                for (int j = 0; j < liveMatches.size(); j++) {
+
+                    persist.checkGambling(liveMatches.get(j));
+                    persist.setSkills(liveMatches.get(j));
+
+                    liveMatches.get(j).setIsLive(false);
+                    persist.save(liveMatches.get(j));
+                }
+                if (i < league.size()) {
+                    for (int j = 0; j < league.get(i).size(); j++) {
+                        league.get(i).get(j).setIsLive(true);
+                        persist.save(league.get(i).get(j));
+                    }
+                }
+                try {
+                    Thread.sleep(CYCLE_TIME * 1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }).start();
     }
 
     @RequestMapping(value = "/sign-up", method = {RequestMethod.POST})
@@ -170,6 +168,11 @@ public class GeneralController {
     @RequestMapping(value = "get-user-gambling", method = {RequestMethod.GET, RequestMethod.POST})
     public List<Gamble> getUserGambling(String secret) {
         return persist.getUserGambling(secret);
+    }
+
+    @RequestMapping(value = "start-new-season", method = {RequestMethod.GET, RequestMethod.POST})
+    public void startNewSeason() {
+        createSeason();
     }
 
 }
