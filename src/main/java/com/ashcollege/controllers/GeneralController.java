@@ -13,8 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.annotation.PostConstruct;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.ashcollege.utils.Constants.*;
 import static com.ashcollege.utils.Errors.*;
@@ -26,7 +29,7 @@ public class GeneralController {
     private Persist persist;
 
     private final List<SseEmitter> clients = new ArrayList<>();
-
+    private int remainingTime = CYCLE_TIME;
 
     @PostConstruct
     public void init() {
@@ -44,7 +47,9 @@ public class GeneralController {
         }
 
         new Thread(() -> {
+
             for (int i = 0; i < league.size() + 1; i++) {
+                remainingTime = CYCLE_TIME - 1;
                 System.out.println("-------------------switch----------------");
                 List<Match> liveMatches = persist.loadLiveMatchList();
 
@@ -75,14 +80,20 @@ public class GeneralController {
             while (true) {
                 try {
                     Thread.sleep(1000);
+                    remainingTime--;
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
                 try {
                     persist.addGoals();
+
+                    Map<String, Object> matchData = new HashMap<>();
+                    matchData.put("match", persist.loadMatchList());
+                    matchData.put("remainingTime", remainingTime);
+
                     for (SseEmitter emitter : clients) {
                         try {
-                            emitter.send(persist.loadMatchList());
+                            emitter.send(matchData);
                         }catch (Exception e) {
                         }
                     }
