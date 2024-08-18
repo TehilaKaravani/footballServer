@@ -1,13 +1,11 @@
 package com.ashcollege.entities;
 
-import com.github.javafaker.Faker;
-
 public class Match {
     private int id;
     private Team team1;
     private Team team2;
-    private int goals_T1;
-    private int goals_T2;
+    private int goalsT1;
+    private int goalsT2;
     private Boolean isLive;
 
     public Match() {
@@ -16,8 +14,8 @@ public class Match {
     public Match(Team team1, Team team2) {
         this.team1 = team1;
         this.team2 = team2;
-        this.goals_T1 = 0;
-        this.goals_T2 = 0;
+        this.goalsT1 = 0;
+        this.goalsT2 = 0;
         this.isLive = null;
     }
     public int getId() {
@@ -44,20 +42,20 @@ public class Match {
         this.team2 = team2;
     }
 
-    public int getGoals_T1() {
-        return goals_T1;
+    public int getGoalsT1() {
+        return goalsT1;
     }
 
-    public void setGoals_T1(int goals_T1) {
-        this.goals_T1 = goals_T1;
+    public void setGoalsT1(int goalsT1) {
+        this.goalsT1 = goalsT1;
     }
 
-    public int getGoals_T2() {
-        return goals_T2;
+    public int getGoalsT2() {
+        return goalsT2;
     }
 
-    public void setGoals_T2(int goals_T2) {
-        this.goals_T2 = goals_T2;
+    public void setGoalsT2(int goalsT2) {
+        this.goalsT2 = goalsT2;
     }
 
     public Boolean getIsLive() {
@@ -70,22 +68,22 @@ public class Match {
 
     public Team winner () {
         Team winner = null;
-        if (this.goals_T1 > this.goals_T2) {
+        if (this.goalsT1 > this.goalsT2) {
             winner = this.team1;
-        }else if (this.goals_T1 < this.goals_T2){
+        }else if (this.goalsT1 < this.goalsT2){
             winner = this.team2;
         }
         return winner;
     }
 
-    public void addGoal_T1() {
-        if (this.goals_T1 < 9) {
-            this.goals_T1++;
+    public void addGoalT1() {
+        if (this.goalsT1 < 9) {
+            this.goalsT1++;
         }
     }
-    public void addGoal_T2() {
-        if (this.goals_T2 < 9) {
-            this.goals_T2++;
+    public void addGoalT2() {
+        if (this.goalsT2 < 9) {
+            this.goalsT2++;
         }
     }
 }

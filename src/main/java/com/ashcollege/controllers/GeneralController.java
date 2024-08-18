@@ -4,7 +4,6 @@ import com.ashcollege.Persist;
 import com.ashcollege.entities.*;
 import com.ashcollege.responses.BasicResponse;
 import com.ashcollege.responses.UserResponse;
-import com.ashcollege.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.annotation.PostConstruct;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,55 +46,52 @@ public class GeneralController {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                try {
-                    persist.addGoals();
 
-                    Map<String, Object> matchData = new HashMap<>();
-                    matchData.put("match", persist.loadMatchList());
-                    matchData.put("remainingTime", remainingTime);
+                persist.addMatchGoals();
 
-                    for (SseEmitter emitter : clients) {
-                        try {
-                            emitter.send(matchData);
-                        }catch (Exception e) {
-                        }
+                Map<String, Object> matchData = new HashMap<>();
+                matchData.put("match", persist.loadMatchList());
+                matchData.put("remainingTime", remainingTime);
+
+                for (SseEmitter emitter : clients) {
+                    try {
+                        emitter.send(matchData);
+                    } catch (Exception e) {
+                        System.out.println("emitter error");
                     }
-                } catch (Exception e) {
                 }
-
             }
         }).start();
     }
 
 
-    public void createSeason() {
+    private void createSeason() {
         System.out.println("****createSeason****");
-        final ArrayList<ArrayList<Match>> league = persist.getLeagueGames();
+        final ArrayList<ArrayList<Match>> leagueMatches = persist.getLeagueGames();
 
-        for (int i = 0; i < league.size(); i++) {
-            for (int j = 0; j < league.get(i).size(); j++) {
-                persist.save(league.get(i).get(j));
+        for (ArrayList<Match> leagueMatch : leagueMatches) {
+            for (Match match : leagueMatch) {
+                persist.save(match);
             }
         }
 
         new Thread(() -> {
-            for (int i = 0; i < league.size() + 1; i++) {
+            for (int i = 0; i < leagueMatches.size() + 1; i++) {
                 remainingTime = CYCLE_TIME - 1;
                 System.out.println("-------------------switch----------------");
                 List<Match> liveMatches = persist.loadLiveMatchList();
 
-                for (int j = 0; j < liveMatches.size(); j++) {
+                for (Match liveMatch : liveMatches) {
+                    persist.checkGambling(liveMatch);
+                    persist.setSkills(liveMatch);
 
-                    persist.checkGambling(liveMatches.get(j));
-                    persist.setSkills(liveMatches.get(j));
-
-                    liveMatches.get(j).setIsLive(false);
-                    persist.save(liveMatches.get(j));
+                    liveMatch.setIsLive(false);
+                    persist.save(liveMatch);
                 }
-                if (i < league.size()) {
-                    for (int j = 0; j < league.get(i).size(); j++) {
-                        league.get(i).get(j).setIsLive(true);
-                        persist.save(league.get(i).get(j));
+                if (i < leagueMatches.size()) {
+                    for (int j = 0; j < leagueMatches.get(i).size(); j++) {
+                        leagueMatches.get(i).get(j).setIsLive(true);
+                        persist.save(leagueMatches.get(i).get(j));
                     }
                 }
                 try {
@@ -140,7 +135,7 @@ public class GeneralController {
     }
 
     @RequestMapping(value = "start-streaming", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter CreateStreamingSession() {
+    public SseEmitter createStreamingSession() {
         try {
             SseEmitter sseEmitter = new SseEmitter((long) (CONNECTION_ֹTIMEOUT));
             clients.add(sseEmitter);

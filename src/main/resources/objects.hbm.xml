@@ -32,9 +32,9 @@
                      class="com.ashcollege.entities.Team"/>
         <many-to-one name="team2" column="team2"
                      class="com.ashcollege.entities.Team"/>
-        <property name="goals_T1" type="int" column="goals_T1"/>
-        <property name="goals_T2" type="int" column="goals_T2"/>
-        <property name="isLive" type="boolean" column="is_Live"/>
+        <property name="goalsT1" type="int" column="goalsT1"/>
+        <property name="goalsT2" type="int" column="goalsT2"/>
+        <property name="isLive" type="boolean" column="isLive"/>
     </class>
 
 
@@ -42,19 +42,14 @@
         <id name="id" type="int" column="id">
             <generator class="native"/>
         </id>
-        <many-to-one name="user" column="user_id"
+        <many-to-one name="user" column="userId"
                      class="com.ashcollege.entities.User"/>
-        <many-to-one name="match" column="match_id"
+        <many-to-one name="match" column="matchId"
                      class="com.ashcollege.entities.Match"/>
         <property name="team" type="int" column="team"/>
         <property name="sum" type="int" column="sum"/>
         <property name="ratio" type="double" column="ratio"/>
-        <property name="isCorrect" type="boolean" column="is_Correct"/>
+        <property name="isCorrect" type="boolean" column="isCorrect"/>
     </class>
-
-    <!--    example2-->
-    <!--    <many-to-one name="object" column="object_id"-->
-    <!--                 class="com.ashcollege.entities.OtherClass"/>-->
-
 
 </hibernate-mapping>

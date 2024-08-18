@@ -255,23 +255,23 @@ public class Persist {
         return userResponse;
     }
 
-    public void addGoals() {
+    public void addMatchGoals() {
         List<Match> liveMatches = loadLiveMatchList();
         for (Match game : liveMatches) {
             Faker faker = new Faker();
-            int goalRandom = faker.random().nextInt(0, 100);
-            if (goalRandom <= GOAL_CHANCE) {
+            int goalProbability = faker.random().nextInt(0, 100);
+            if (goalProbability <= GOAL_CHANCE) {
                 int weatherEffectChance = faker.random().nextInt(20, 80);
                 int weatherEffectRandom = faker.random().nextInt(0, 100);
                 if ((game.getTeam1().getSkillLevel() > game.getTeam2().getSkillLevel()) && (weatherEffectRandom > weatherEffectChance)) {
-                    game.addGoal_T1();
+                    game.addGoalT1();
                 } else if (game.getTeam1().getSkillLevel() < game.getTeam2().getSkillLevel() && (weatherEffectRandom > weatherEffectChance)) {
-                    game.addGoal_T2();
+                    game.addGoalT2();
                 } else {
                     if (faker.random().nextInt(0, 1) == 0) {
-                        game.addGoal_T1();
+                        game.addGoalT1();
                     } else {
-                        game.addGoal_T2();
+                        game.addGoalT2();
                     }
                 }
             }
@@ -308,8 +308,8 @@ public class Persist {
 
     public List<Gamble> getGamblingByMatch(int matchId) {
         return (List<Gamble>) this.sessionFactory.getCurrentSession().createQuery(
-                        "FROM Gamble WHERE match_id = :match_id")
-                .setParameter("match_id", matchId)
+                        "FROM Gamble WHERE matchId = :matchId")
+                .setParameter("matchId", matchId)
                 .list();
     }
 
@@ -337,8 +337,8 @@ public class Persist {
     public List<Gamble> getUserGambling(String secret) {
         User user = getUserBySecret(secret);
         return (List<Gamble>) this.sessionFactory.getCurrentSession().createQuery(
-                        "FROM Gamble WHERE user_id = :user_id")
-                .setParameter("user_id", user.getId())
+                        "FROM Gamble WHERE userId = :userId")
+                .setParameter("userId", user.getId())
                 .list();
     }
 
