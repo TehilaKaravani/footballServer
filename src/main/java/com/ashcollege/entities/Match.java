@@ -79,9 +79,13 @@ public class Match {
     }
 
     public void addGoal_T1() {
-        this.goals_T1++;
+        if (this.goals_T1 < 9) {
+            this.goals_T1++;
+        }
     }
     public void addGoal_T2() {
-        this.goals_T2++;
+        if (this.goals_T2 < 9) {
+            this.goals_T2++;
+        }
     }
 }

@@ -261,10 +261,11 @@ public class Persist {
             Faker faker = new Faker();
             int goalRandom = faker.random().nextInt(0, 100);
             if (goalRandom <= GOAL_CHANCE) {
+                int weatherEffectChance = faker.random().nextInt(20, 80);
                 int weatherEffectRandom = faker.random().nextInt(0, 100);
-                if ((game.getTeam1().getSkillLevel() > game.getTeam2().getSkillLevel()) && (weatherEffectRandom > WEATHER_EFFECT_CHANCE)) {
+                if ((game.getTeam1().getSkillLevel() > game.getTeam2().getSkillLevel()) && (weatherEffectRandom > weatherEffectChance)) {
                     game.addGoal_T1();
-                } else if (game.getTeam1().getSkillLevel() < game.getTeam2().getSkillLevel() && (weatherEffectRandom > WEATHER_EFFECT_CHANCE)) {
+                } else if (game.getTeam1().getSkillLevel() < game.getTeam2().getSkillLevel() && (weatherEffectRandom > weatherEffectChance)) {
                     game.addGoal_T2();
                 } else {
                     if (faker.random().nextInt(0, 1) == 0) {
