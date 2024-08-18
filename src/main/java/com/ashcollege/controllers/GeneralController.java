@@ -57,7 +57,6 @@ public class GeneralController {
                     try {
                         emitter.send(matchData);
                     } catch (Exception e) {
-                        System.out.println("emitter error");
                     }
                 }
             }
