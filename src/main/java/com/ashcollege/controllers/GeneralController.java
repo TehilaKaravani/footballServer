@@ -42,7 +42,9 @@ public class GeneralController {
             while (true) {
                 try {
                     Thread.sleep(1000);
-                    remainingTime--;
+                    if (remainingTime > 0) {
+                        remainingTime--;
+                    }
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -77,6 +79,7 @@ public class GeneralController {
         new Thread(() -> {
             for (int i = 0; i < leagueMatches.size() + 1; i++) {
                 remainingTime = CYCLE_TIME - 1;
+
                 System.out.println("-------------------switch----------------");
                 List<Match> liveMatches = persist.loadLiveMatchList();
 
